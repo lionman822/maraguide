@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大马赛马拉生态区域交互报告 - 马拉野保学院发布</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 引入 Leaflet.js 地图库 (用于 OpenStreetMap) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'mara-bg': '#F4EEDC',      /* Safari 沙黄色 */
+                        'mara-text': '#4A3728',    /* 泥土棕 */
+                        'mara-accent': '#D22B2B',  /* 马赛红 */
+                        'mara-green': '#4A5D23',   /* Simba绿 */
+                        'mara-sand': '#D9C5A0'     /* 浅沙色 */
+                    },
+                    fontFamily: {
+                        'serif': ['"Noto Serif SC"', '"Times New Roman"', 'serif'],
+                        'sans': ['"Noto Sans SC"', '"Open Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F4EEDC;
+            color: #4A3728;
+            font-family: '"Noto Sans SC"', '"Open Sans"', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: '"Noto Serif SC"', '"Times New Roman"', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 50vh;
+            max-height: 450px;
+            min-height: 300px;
+        }
+        /* OpenStreetMap 容器样式 */
+        #mara-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 1rem;
+            z-index: 10;
+        }
+        .nav-btn {
+            position: relative;
+        }
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: #D22B2B;
+            transition: width 0.3s ease;
+        }
+        .nav-btn.active::after {
+            width: 100%;
+        }
+        .nav-btn.active {
+            color: #D22B2B;
+            font-weight: 700;
+        }
+        .section-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .section-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-card {
+            background-color: #FDFBF7;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-bottom: 4px solid #D9C5A0;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-bottom-color: #4A5D23;
+        }
+        .list-btn {
+            transition: all 0.2s;
+        }
+        .list-btn.active {
+            background-color: #4A5D23;
+            color: white;
+            border-color: #4A5D23;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #FDFBF7; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D9C5A0; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4A5D23; }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <header class="bg-[#FDFBF7] shadow-sm sticky top-0 z-50 border-b border-[#EADCBB]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-3xl mr-2">🌍</span>
+                    <h1 class="text-2xl font-black text-mara-text tracking-tight i18n" data-zh="大马赛马拉<span class='text-mara-accent'>生态区域</span>" data-en="Greater Maasai Mara <span class='text-mara-accent'>Ecosystem</span>">大马赛马拉<span class="text-mara-accent">生态区域</span></h1>
+                </div>
+                <button id="langToggle" class="ml-auto bg-mara-sand/30 hover:bg-mara-sand/50 text-mara-text px-4 py-1.5 rounded-full font-bold text-sm transition-colors border border-mara-sand/50 shadow-sm flex items-center">
+                    <span class="mr-1">EN</span> / <span class="ml-1 text-xs">中文</span>
+                </button>
+            </div>
+            <nav class="flex space-x-6 overflow-x-auto pb-0" id="main-nav">
+                <!-- 新增：历史 和 地理 -->
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-history" data-zh="历史" data-en="History">历史</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-geography" data-zh="地理" data-en="Geography">地理</button>
+                
+                <button class="nav-btn active pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-overview" data-zh="生态概览" data-en="Overview">生态概览</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-wildlife" data-zh="野生动物" data-en="Wildlife">野生动物</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-migration" data-zh="大迁徙" data-en="Great Migration">大迁徙</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-conservancies" data-zh="保护区矩阵档案" data-en="Conservancy Dossiers">保护区矩阵档案</button>
+                
+                <!-- 调整位置：将交通和住宿放到前面 -->
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-logistics" data-zh="如何抵达马赛马拉" data-en="Getting to the Mara">如何抵达马赛马拉</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-accommodation" data-zh="选择住宿点" data-en="Accommodation">选择住宿点</button>
+
+                <!-- 调整位置：主要机构在左，马拉野保学院在最右 -->
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-orgs" data-zh="主要野保机构" data-en="Key Organizations">主要野保机构</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-mnhc" data-zh="马拉野保学院" data-en="MNHC">马拉野保学院</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- ================= 历史与演变 (重构板块) ================= -->
+        <section id="sec-history" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="历史与演变：重新定义马赛马拉" data-en="History & Evolution: Redefining the Maasai Mara">历史与演变：重新定义马赛马拉</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl mb-6 i18n" data-zh="马赛马拉是一个地理区域，而不是一个行政区域。传统意义上的马赛马拉包括马赛马拉国家保护区（MMNR）和相邻的部落领地。马赛马拉的自然保护始于国家保护区，它奠定了当今整个生态系统的基础。" data-en="The Maasai Mara is a geographical region, not an administrative one. Traditionally, it comprises the Maasai Mara National Reserve (MMNR) and adjacent tribal lands. Conservation here began with the National Reserve, which laid the foundation for today's entire ecosystem.">
+                    马赛马拉是一个地理区域，而不是一个行政区域。传统意义上的马赛马拉包括马赛马拉国家保护区（MMNR）和相邻的部落领地。马赛马拉的自然保护始于国家保护区，它奠定了当今整个生态系统的基础。
+                </p>
+
+                <!-- 地理架构数据卡片 -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#EADCBB] mb-12">
+                    <h3 class="text-xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-2xl mr-3'>🗺️</span> 地理空间与部落领地划分" data-en="<span class='text-2xl mr-3'>🗺️</span> Spatial Geography & Tribal Lands">
+                        <span class="text-2xl mr-3">🗺️</span> 地理空间与部落领地划分
+                    </h3>
+                    <p class="text-mara-text/80 mb-6 i18n" data-zh="马赛马拉国家保护区（公共）面积约 <b>1,510 平方公里</b>，而相邻的、由社区管理的部落领地（主要用于牧场和私人保护区）面积达 <b>3,810 平方公里</b>。这些部落土地主要分布在北部和东部，由以下五个核心区域组成：" data-en="The MMNR (public) covers approx <b>1,510 sq km</b>, while adjacent community-managed tribal lands (for grazing & private conservancies) cover <b>3,810 sq km</b>. These lands are distributed to the north and east, comprising five core tribal areas:">
+                        马赛马拉国家保护区（公共）面积约 <b>1,510 平方公里</b>，而相邻的、由社区管理的部落领地（主要用于牧场和私人保护区）面积达 <b>3,810 平方公里</b>。这些部落土地主要分布在北部和东部，由以下五个核心区域组成：
+                    </p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        <div class="bg-mara-bg p-3 rounded-lg border border-mara-sand/40 text-center">
+                            <div class="font-bold text-mara-text">科亚基</div>
+                            <div class="text-xs text-mara-text/60">Koyiaki</div>
+                            <div class="text-mara-green font-black mt-1">931 km²</div>
+                        </div>
+                        <div class="bg-mara-bg p-3 rounded-lg border border-mara-sand/40 text-center">
+                            <div class="font-bold text-mara-text">奥肯耶</div>
+                            <div class="text-xs text-mara-text/60">Olkinyei</div>
+                            <div class="text-mara-green font-black mt-1">787 km²</div>
+                        </div>
+                        <div class="bg-mara-bg p-3 rounded-lg border border-mara-sand/40 text-center">
+                            <div class="font-bold text-mara-text">西亚娜</div>
+                            <div class="text-xs text-mara-text/60">Siana</div>
+                            <div class="text-mara-green font-black mt-1">1,316 km²</div>
+                        </div>
+                        <div class="bg-mara-bg p-3 rounded-lg border border-mara-sand/40 text-center">
+                            <div class="font-bold text-mara-text">勒梅克</div>
+                            <div class="text-xs text-mara-text/60">Lemek</div>
+                            <div class="text-mara-green font-black mt-1">717 km²</div>
+                        </div>
+                        <div class="bg-mara-bg p-3 rounded-lg border border-mara-sand/40 text-center">
+                            <div class="font-bold text-mara-text">奥酋罗</div>
+                            <div class="text-xs text-mara-text/60">Ol Chorro Oiroua</div>
+                            <div class="text-mara-green font-black mt-1">59 km²</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-mara-accent/5 border-l-4 border-mara-accent p-4 rounded-r-lg">
+                        <p class="text-mara-text/90 text-sm md:text-base i18n" data-zh="截至2024年，在这些广袤的部落土地上，已经建立了 <b>26个私人保护区</b>，总面积达到 <b>1,600平方公里</b>。这意味着私人保护区占到了马赛马拉地区自然保护地总面积的 <b>51.4%</b>，规模超越了国家保护区本身，相当于再创了一个国家保护区！" data-en="By 2024, <b>26 private conservancies</b> have been established on these tribal lands, covering <b>1,600 sq km</b>. This means private conservancies account for <b>51.4%</b> of the total protected area in the Mara region—surpassing the National Reserve itself and essentially creating a second national reserve!">
+                            截至2024年，在这些广袤的部落土地上，已经建立了 <b>26个私人保护区</b>，总面积达到 <b>1,600平方公里</b>。这意味着私人保护区占到了马赛马拉地区自然保护地总面积的 <b>51.4%</b>，规模超越了国家保护区本身，相当于再创了一个国家保护区！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 历史时间轴 (Timeline) -->
+                <h3 class="text-2xl font-serif font-bold text-mara-text mb-8 i18n" data-zh="保护区管理演变编年史" data-en="Chronology of Conservancy Management">保护区管理演变编年史</h3>
+                <div class="relative pl-6 md:pl-8 border-l-4 border-mara-sand space-y-10 ml-2 md:ml-4">
+                    
+                    <!-- 1948 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-green rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">1948</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-[#EADCBB]">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>设立保留地：</b> 最早的马赛马拉野生动物保留地（Maasai Mara Wildlife Sanctuary）由英国殖民地政府设立，范围仅包括马拉三角洲地区（Mara Triangle），面积只有 510 平方公里。" data-en="<b>Sanctuary Established:</b> The earliest Maasai Mara Wildlife Sanctuary was established by the British colonial government. It only included the Mara Triangle, covering just 510 sq km."><b>设立保留地：</b> 最早的马赛马拉野生动物保留地（Maasai Mara Wildlife Sanctuary）由英国殖民地政府设立，范围仅包括马拉三角洲地区（Mara Triangle），面积只有 510 平方公里。</p>
+                        </div>
+                    </div>
+
+                    <!-- 1961 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-sand rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">1961</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-[#EADCBB]">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>保护区成立：</b> 马赛马拉野生动物保护区（Maasai Mara Game Reserve）正式成立，扩展到了马拉河东部到奥罗莱姆提亚（Ololaimutia）的广大区域，面积达到 1,831 平方公里，由纳罗克地方政府（Narok County Council）负责管理。" data-en="<b>Game Reserve Formed:</b> The Maasai Mara Game Reserve was officially formed, expanding east of the Mara River to Ololaimutia. It covered 1,831 sq km and was managed by the Narok County Council."><b>保护区成立：</b> 马赛马拉野生动物保护区（Maasai Mara Game Reserve）正式成立，扩展到了马拉河东部到奥罗莱姆提亚（Ololaimutia）的广大区域，面积达到 1,831 平方公里，由纳罗克地方政府（Narok County Council）负责管理。</p>
+                        </div>
+                    </div>
+
+                    <!-- 1974 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-sand rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">1974</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-[#EADCBB]">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>升级国家级：</b> 马赛马拉野生动物保护区正式升级为<b>马赛马拉国家保护区（Maasai Mara National Reserve）</b>，仍由纳罗克地方政府管理。" data-en="<b>Upgraded Status:</b> The Game Reserve was officially upgraded to the <b>Maasai Mara National Reserve (MMNR)</b>, still under Narok County Council management."><b>升级国家级：</b> 马赛马拉野生动物保护区正式升级为<b>马赛马拉国家保护区（Maasai Mara National Reserve）</b>，仍由纳罗克地方政府管理。</p>
+                        </div>
+                    </div>
+
+                    <!-- 1984 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-accent rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">1984</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-mara-accent/30 border-l-4 border-l-mara-accent">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>面积缩减：</b> 国家保护区的面积被缩减到 1,510 平方公里，主要原因是为了平衡保护区与当地马赛人放牧需求之间的冲突。被分出去的土地即现在的塔莱克（Talek）镇及附近区域，这里也是目前造成环境污染和非法放牧等各种问题的主要源头之一。" data-en="<b>Area Reduction:</b> The reserve's area was reduced to 1,510 sq km to balance conservation with local Maasai grazing needs. The excised land is now Talek town and its vicinity, which is a major source of current environmental pollution and illegal grazing issues."><b>面积缩减：</b> 国家保护区的面积被缩减到 1,510 平方公里，主要原因是为了平衡保护区与当地马赛人放牧需求之间的冲突。被分出去的土地即现在的塔莱克（Talek）镇及附近区域，这里也是目前造成环境污染和非法放牧等各种问题的主要源头之一。</p>
+                        </div>
+                    </div>
+
+                    <!-- 1994 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-sand rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">1994</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-[#EADCBB]">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>分治时期：</b> 马赛马拉国家保护区被拆分为两部分：东部地区由纳罗克郡（Narok County）管理；西北部的马拉三角洲（Mara Triangle）由当时的跨马拉郡（Transmara County）管理。" data-en="<b>Split Administration:</b> The MMNR was split into two: the eastern section managed by Narok County, and the northwestern Mara Triangle managed by the then Transmara County."><b>分治时期：</b> 马赛马拉国家保护区被拆分为两部分：东部地区由纳罗克郡（Narok County）管理；西北部的马拉三角洲（Mara Triangle）由当时的跨马拉郡（Transmara County）管理。</p>
+                        </div>
+                    </div>
+
+                    <!-- 2013 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-mara-green rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">2013</h4>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-[#EADCBB]">
+                            <p class="text-mara-text/80 i18n" data-zh="<b>重新统一管理：</b> 肯尼亚新宪法改革了行政规划，将两郡合并成纳罗克州，重新统一管理马赛马拉国家保护区。这一合并加强了统一管理和协调，极大提高了资源配置效率，促进了野生动物保护和区域的可持续发展。" data-en="<b>Reunification:</b> Kenya's new constitution reformed administrative boundaries, merging the two counties into Narok County. This reunited the management of the MMNR, significantly improving resource allocation, wildlife conservation, and regional sustainable development."><b>重新统一管理：</b> 肯尼亚新宪法改革了行政规划，将两郡合并成纳罗克州，重新统一管理马赛马拉国家保护区。这一合并加强了统一管理和协调，极大提高了资源配置效率，促进了野生动物保护和区域的可持续发展。</p>
+                        </div>
+                    </div>
+
+                    <!-- 2023 -->
+                    <div class="relative">
+                        <div class="absolute w-6 h-6 bg-[#4A3728] rounded-full -left-[35px] md:-left-[43px] border-4 border-[#FDFBF7] shadow"></div>
+                        <h4 class="text-2xl font-black text-mara-text mb-2 tracking-wider">2023</h4>
+                        <div class="bg-mara-green text-white p-5 rounded-xl shadow-md border-t-4 border-mara-accent">
+                            <p class="text-white/95 i18n" data-zh="<b>全新十年规划：</b> 纳罗克州政府颁布了《2023—2032年马赛马拉国家保护区管理规划》。同年，州政府与KWS（肯尼亚野生动物管理局）、MMWCA（马赛马拉野生动物保护地联盟）及WRTI联合签署了《大马赛马拉生态区域管理规划》。这些措施对马赛马拉地区未来的生物多样性保护和可持续发展产生了极大的推动作用。" data-en="<b>New Decade Plans:</b> Narok County enacted the 'Maasai Mara National Reserve Management Plan 2023-2032'. Simultaneously, the County, alongside KWS, MMWCA, and WRTI, jointly signed the 'Greater Maasai Mara Ecosystem Management Plan'. These blueprints heavily propel the region's future biodiversity conservation and sustainable development."><b>全新十年规划：</b> 纳罗克州政府颁布了《2023—2032年马赛马拉国家保护区管理规划》。同年，州政府与KWS（肯尼亚野生动物管理局）、MMWCA（马赛马拉野生动物保护地联盟）及WRTI联合签署了《大马赛马拉生态区域管理规划》。这些措施对马赛马拉地区未来的生物多样性保护和可持续发展产生了极大的推动作用。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 地理 (重构扩展板块) ================= -->
+        <section id="sec-geography" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="地理特征：东非大裂谷的明珠" data-en="Geography: Jewel of the Great Rift Valley">地理特征：东非大裂谷的明珠</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl mb-8 i18n" data-zh="马赛马拉（Maasai Mara）位于肯尼亚西南部。其南边与坦桑尼亚的塞伦盖蒂（Serengeti）无缝接壤；西部是陡峭的奥卢洛罗/锡里亚悬崖（Oloololo / Siria Escarpment）；东部一直延伸到沙河（Sand River）的中上游地带；北部延伸到马拉河的中游地带；而东北部则是广阔的洛伊塔平原（Loita Plains）。" data-en="The Maasai Mara is located in southwestern Kenya. It borders Tanzania's Serengeti to the south, the steep Oloololo (Siria) Escarpment to the west, extends to the mid-upper Sand River to the east, the mid-Mara River to the north, and the vast Loita Plains to the northeast.">
+                    马赛马拉（Maasai Mara）位于肯尼亚西南部。其南边与坦桑尼亚的塞伦盖蒂（Serengeti）无缝接壤；西部是陡峭的奥卢洛罗/锡里亚悬崖（Oloololo / Siria Escarpment）；东部一直延伸到沙河（Sand River）的中上游地带；北部延伸到马拉河的中游地带；而东北部则是广阔的洛伊塔平原（Loita Plains）。
+                </p>
+
+                <!-- 地形图占位 -->
+                <div class="w-full bg-[#EADCBB]/20 border-2 border-dashed border-mara-sand rounded-2xl p-10 text-center mb-10 flex flex-col items-center justify-center hover:bg-[#EADCBB]/30 transition">
+                    <span class="text-5xl mb-4">🗺️</span>
+                    <span class="text-mara-text/80 font-bold text-lg i18n" data-zh="" data-en=""></span>
+                    <span class="text-mara-text/50 text-sm mt-2 i18n" data-zh="上图：马赛马拉地形图" data-en="Above: Topographic map of the Maasai Mara">上图：马赛马拉地形图</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <!-- 面积与生态系统 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB]">
+                    <h3 class="text-xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-2xl mr-3'>🌍</span> 巨型草原生态系统" data-en="<span class='text-2xl mr-3'>🌍</span> Mega-Savanna Ecosystem">
+                        <span class="text-2xl mr-3">🌍</span> 巨型草原生态系统
+                    </h3>
+                    <p class="text-mara-text/80 leading-relaxed mb-4 i18n" data-zh="马赛马拉和塞伦盖蒂共同构成了非洲最大的草原生态系统——<b>马拉-塞伦盖蒂生态系统（Mara-Serengeti Ecosystem）</b>，总面积约 30,500 平方公里。" data-en="The Maasai Mara and Serengeti together form Africa's largest savanna ecosystem—the <b>Mara-Serengeti Ecosystem</b>, totaling ~30,500 sq km.">马赛马拉和塞伦盖蒂共同构成了非洲最大的草原生态系统——<b>马拉-塞伦盖蒂生态系统（Mara-Serengeti Ecosystem）</b>，总面积约 30,500 平方公里。</p>
+                    
+                    <div class="space-y-3 mt-4">
+                        <div class="relative w-full bg-mara-sand/30 rounded-full h-8 overflow-hidden flex items-center">
+                            <div class="absolute left-0 top-0 h-full bg-mara-green flex items-center px-3 text-xs font-bold text-white whitespace-nowrap" style="width: 18%;">
+                                <span class="i18n" data-zh="马赛马拉 5,500 km²" data-en="Mara 5,500 km²">马赛马拉 5,500 km²</span>
+                            </div>
+                            <div class="absolute right-0 top-0 h-full bg-[#EADCBB] flex items-center justify-end px-3 text-xs font-bold text-mara-text whitespace-nowrap" style="width: 82%;">
+                                <span class="i18n" data-zh="塞伦盖蒂 25,000 km²" data-en="Serengeti 25,000 km²">塞伦盖蒂 25,000 km²</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-mara-text/60 text-center italic i18n" data-zh="马赛马拉的面积约相当于塞伦盖蒂的22%" data-en="The Mara is roughly 22% the size of the Serengeti">马赛马拉的面积约相当于塞伦盖蒂的22%</p>
+                    </div>
+                </div>
+
+                <!-- 名称起源 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB]">
+                    <h3 class="text-xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-2xl mr-3'>📖</span> 名称的起源" data-en="<span class='text-2xl mr-3'>📖</span> Origin of the Name">
+                        <span class="text-2xl mr-3">📖</span> 名称的起源
+                    </h3>
+                    <p class="text-mara-text/80 leading-relaxed mb-4 i18n" data-zh="<b>Maasai Mara</b> 的名称来源于该地区的原住民马赛人（Maasai），以及马赛语（Maa）中的单词 <b>“Mara”</b>，意指“点缀着金合欢树和灌木丛的草原”。" data-en="The name <b>Maasai Mara</b> derives from the indigenous Maasai people and the Maa word <b>'Mara'</b>, meaning 'spotted'—referring to the savanna landscape dotted with acacia trees and scrub."><b>Maasai Mara</b> 的名称来源于该地区的原住民马赛人（Maasai），以及马赛语（Maa）中的单词 <b>“Mara”</b>，意指“点缀着金合欢树和灌木丛的草原”。</p>
+                    <div class="bg-mara-bg p-3 rounded-lg border-l-4 border-mara-accent text-sm text-mara-text/90 i18n" data-zh="很多人习惯把这里简称为“马拉”（Mara）。这是一个非常有质感的简称，但对于游客和官方交流而言，使用全称“马赛马拉”依然最为方便。" data-en="Many affectionately abbreviate it as 'The Mara'. While it has a great ring to it, for tourists and official communications, 'Maasai Mara' remains the most practical term.">很多人习惯把这里简称为“马拉”（Mara）。这是一个非常有质感的简称，但对于游客和官方交流而言，使用全称“马赛马拉”依然最为方便。</div>
+                </div>
+            </div>
+
+            <!-- 地形与海拔 -->
+            <div class="bg-[#FDFBF7] p-8 rounded-2xl shadow-sm border border-[#EADCBB] mb-10">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>🏔️</span> 地貌与海拔规律" data-en="<span class='text-3xl mr-3'>🏔️</span> Topography & Elevation Patterns">
+                    <span class="text-3xl mr-3">🏔️</span> 地貌与海拔规律
+                </h3>
+                
+                <p class="text-mara-text/80 leading-relaxed mb-6 i18n" data-zh="马赛马拉以广阔的平原为主，中间也横贯了一些山地。核心平原包括波西平原（Posee Plains）、布瑞加特平原（Burungat Plains）以及天堂平原（Paradise Plains）。除了西部的悬崖外，其余山地坡度都不大，如恩家玛山地（Ngama Hills）、奥罗杜加山地（Ol Oldoga Hill）、凯波罗泰山地（Kebolotel Hills）、色维山地（Survey Hills）以及伊马缇山地（Emarty Hills）。<br><br>整体海拔在 <b>1,500米至2,280米</b> 之间，并呈现出极其鲜明的空间分布规律：" data-en="The Mara is dominated by vast plains interspersed with hills. Core plains include Posee, Burungat, and Paradise Plains. Besides the western escarpment, the remaining hills are gentle, such as Ngama, Ol Oldoga, Kebolotel, Survey, and Emarty Hills.<br><br>Overall elevation ranges from <b>1,500m to 2,280m</b>, showing distinct spatial patterns:">
+                    马赛马拉以广阔的平原为主，中间也横贯了一些山地。核心平原包括波西平原（Posee Plains）、布瑞加特平原（Burungat Plains）以及天堂平原（Paradise Plains）。除了西部的悬崖外，其余山地坡度都不大，如恩家玛山地（Ngama Hills）、奥罗杜加山地（Ol Oldoga Hill）、凯波罗泰山地（Kebolotel Hills）、色维山地（Survey Hills）以及伊马缇山地（Emarty Hills）。<br><br>整体海拔在 <b>1,500米至2,280米</b> 之间，并呈现出极其鲜明的空间分布规律：
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/50">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-mara-green text-white flex items-center justify-center font-bold mr-3">东</div>
+                            <h4 class="font-bold text-lg text-mara-text i18n" data-zh="马拉河以东区域" data-en="East of the Mara River">马拉河以东区域</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-mara-text/80">
+                            <li class="flex items-center"><span class="text-mara-accent mr-2">↗️</span> <span class="i18n" data-zh="东部海拔 <b>高于</b> 西部" data-en="East is <b>higher</b> than West">东部海拔 <b>高于</b> 西部</span></li>
+                            <li class="flex items-center"><span class="text-mara-accent mr-2">↗️</span> <span class="i18n" data-zh="东北部海拔 <b>高于</b> 西南部" data-en="Northeast is <b>higher</b> than Southwest">东北部海拔 <b>高于</b> 西南部</span></li>
+                            <li class="flex items-center"><span class="text-mara-accent mr-2">↗️</span> <span class="i18n" data-zh="北部海拔 <b>高于</b> 南部" data-en="North is <b>higher</b> than South">北部海拔 <b>高于</b> 南部</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/50">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-mara-accent text-white flex items-center justify-center font-bold mr-3">西</div>
+                            <h4 class="font-bold text-lg text-mara-text i18n" data-zh="马拉河以西区域" data-en="West of the Mara River">马拉河以西区域</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-mara-text/80">
+                            <li class="flex items-center"><span class="text-mara-accent mr-2">↖️</span> <span class="i18n" data-zh="西部海拔 <b>高于</b> 东部" data-en="West is <b>higher</b> than East">西部海拔 <b>高于</b> 东部</span></li>
+                            <li class="flex items-center"><span class="text-mara-accent mr-2">↖️</span> <span class="i18n" data-zh="北部海拔 <b>高于</b> 南部" data-en="North is <b>higher</b> than South">北部海拔 <b>高于</b> 南部</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-mara-sand/10 p-3 rounded text-sm text-mara-text/80 border-l-4 border-mara-sand i18n" data-zh="<b>🌡️ 海拔与气温法则：</b>海拔决定气温。在马赛马拉，每升高 1,000 米，气温大约下降 <b>6.5 摄氏度</b>。" data-en="<b>🌡️ Altitude & Temperature:</b> Elevation determines temperature. In the Mara, temperature drops approx <b>6.5°C</b> for every 1,000m gained."><b>🌡️ 海拔与气温法则：</b>海拔决定气温。在马赛马拉，每升高 1,000 米，气温大约下降 <b>6.5 摄氏度</b>。</div>
+            </div>
+
+            <!-- 气候与影响 -->
+            <div class="bg-white p-8 rounded-2xl shadow-md border-t-8 border-mara-green">
+                <h3 class="text-2xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>🌦️</span> 气候特征与生态影响" data-en="<span class='text-3xl mr-3'>🌦️</span> Climate & Ecological Impact">
+                    <span class="text-3xl mr-3">🌦️</span> 气候特征与生态影响
+                </h3>
+                <p class="text-mara-text/80 leading-relaxed mb-6 i18n" data-zh="整体属于<b>热带草原气候</b>，平均气温在 10°C 至 30°C 之间（旱季气温略低于雨季）。这里昼夜温差大，早晚凉爽，白天炎热。年降雨量在 <b>800 — 1,300 毫米</b> 之间。" data-en="Predominantly a <b>tropical savanna climate</b> with average temperatures between 10°C and 30°C (dry season is slightly cooler). It features a large diurnal temperature range—cool mornings/evenings and hot days. Annual rainfall is <b>800–1,300 mm</b>.">
+                    整体属于<b>热带草原气候</b>，平均气温在 10°C 至 30°C 之间（旱季气温略低于雨季）。这里昼夜温差大，早晚凉爽，白天炎热。年降雨量在 <b>800 — 1,300 毫米</b> 之间。
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-mara-bg p-4 rounded-xl text-center border border-mara-sand/40">
+                        <div class="text-2xl mb-1">☀️</div>
+                        <div class="font-bold text-mara-text text-sm i18n" data-zh="长旱季" data-en="Long Dry Season">长旱季</div>
+                        <div class="text-xs text-mara-text/60 mt-1">7月 - 10月</div>
+                    </div>
+                    <div class="bg-mara-bg p-4 rounded-xl text-center border border-mara-sand/40">
+                        <div class="text-2xl mb-1">🌤️</div>
+                        <div class="font-bold text-mara-text text-sm i18n" data-zh="小旱季" data-en="Short Dry Season">小旱季</div>
+                        <div class="text-xs text-mara-text/60 mt-1">1月 - 2月</div>
+                    </div>
+                    <div class="bg-mara-bg p-4 rounded-xl text-center border border-mara-sand/40">
+                        <div class="text-2xl mb-1">🌧️</div>
+                        <div class="font-bold text-mara-text text-sm i18n" data-zh="小雨季" data-en="Short Rains">小雨季</div>
+                        <div class="text-xs text-mara-text/60 mt-1">11月 - 12月</div>
+                    </div>
+                    <div class="bg-[#4A5D23]/10 p-4 rounded-xl text-center border border-mara-green/30">
+                        <div class="text-2xl mb-1">⛈️</div>
+                        <div class="font-bold text-mara-green text-sm i18n" data-zh="长雨季" data-en="Long Rains">长雨季</div>
+                        <div class="text-xs text-mara-text/60 mt-1">3月 - 6月</div>
+                    </div>
+                </div>
+
+                <div class="bg-mara-accent/5 p-5 rounded-xl border border-mara-accent/20">
+                    <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="text-mara-accent mr-2">🐾</span> <span class="i18n" data-zh="气候对生态的深远影响" data-en="Profound Ecological Impact">气候对生态的深远影响</span></h4>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="降雨模式直接决定了角马、斑马等有蹄类动物的迁移轨迹。此外，对于狮子等食肉动物来说，季节交替深刻影响着它们捕猎获取食物的便利性、种群的繁殖周期，以及它们在整个马赛马拉地区的空间分布。" data-en="Rainfall patterns directly dictate the migration routes of ungulates like wildebeest and zebras. Furthermore, for carnivores like lions, seasonal changes profoundly impact their hunting success, reproductive cycles, and spatial distribution across the Mara.">降雨模式直接决定了角马、斑马等有蹄类动物的迁移轨迹。此外，对于狮子等食肉动物来说，季节交替深刻影响着它们捕猎获取食物的便利性、种群的繁殖周期，以及它们在整个马赛马拉地区的空间分布。</p>
+                    
+                    <!-- 新增：全球气候变化影响 -->
+                    <div class="mt-4 pt-4 border-t border-mara-accent/20">
+                        <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="text-[#D22B2B] mr-2">⚠️</span> <span class="i18n" data-zh="全球气候变化的冲击" data-en="Impact of Global Climate Change">全球气候变化的冲击</span></h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="当前全球气候变化对马赛马拉的气候影响很大，传统的旱雨季界限正在变得模糊。比如在2025年，4-5月本来是传统的雨季，却没有多少降雨；而到了7-8月传统的旱季，却经常下雨，下雨天数甚至比4-5月还要多。这种反常气候对野生动物的迁徙规律和生存挑战造成了巨大的冲击。" data-en="Currently, global climate change is heavily impacting the Mara, blurring the traditional boundaries of dry and rainy seasons. For instance, in 2025, April and May (traditionally the long rains) saw very little rainfall; conversely, during the traditional dry season of July and August, it rained frequently, with more rainy days than in April and May. Such anomalous weather profoundly disrupts wildlife migration patterns and survival strategies.">当前全球气候变化对马赛马拉的气候影响很大，传统的旱雨季界限正在变得模糊。比如在2025年，4-5月本来是传统的雨季，却没有多少降雨；而到了7-8月传统的旱季，却经常下雨，下雨天数甚至比4-5月还要多。这种反常气候对野生动物的迁徙规律和生存挑战造成了巨大的冲击。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 生态概览 ================= -->
+        <section id="sec-overview" class="section-content active">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="大马赛马拉生态系统" data-en="The Greater Maasai Mara Ecosystem">大马赛马拉生态系统</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="位于肯尼亚西南部的马赛马拉是世界上最著名、最重要的生态保护区域之一。这里的生态系统远远超出了核心国家保护区的边界，涵盖了一个庞大的社区建立的自然保护地（Conservancies）网络，这对于野生动物的扩散和当地马赛人的生计至关重要。" data-en="Located in southwestern Kenya, the Maasai Mara is one of the world's most famous and important wildlife conservation areas. The ecosystem extends far beyond the boundaries of the core National Reserve, encompassing a vast network of community-owned Conservancies, which are crucial for wildlife dispersal and local Maasai livelihoods.">
+                    位于肯尼亚西南部的马赛马拉是世界上最著名、最重要的生态保护区域之一。这里的生态系统远远超出了核心国家保护区的边界，涵盖了一个庞大的社区建立的自然保护地（Conservancies）网络，这对于野生动物的扩散和当地马赛人的生计至关重要。
+                </p>
+            </div>
+
+            <div class="mb-10 bg-white p-2 rounded-2xl shadow-sm border border-[#EADCBB]">
+                <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-mara-text flex items-center i18n" data-zh="<span class='text-2xl mr-2'>🗺️</span> 大马赛马拉全域地图" data-en="<span class='text-2xl mr-2'>🗺️</span> Greater Maasai Mara Map">
+                        <span class="text-2xl mr-2">🗺️</span> 大马赛马拉全域地图
+                    </h3>
+                    <span class="text-xs text-mara-text/50 i18n" data-zh="可拖动、缩放浏览" data-en="Interactive Map">可拖动、缩放浏览</span>
+                </div>
+                <div id="mara-map" class="border-t border-[#EADCBB]"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="p-6 rounded-xl shadow-sm stat-card">
+                    <div class="text-3xl mb-2">🏞️</div>
+                    <div class="text-sm text-mara-text/60 uppercase tracking-wide font-bold i18n" data-zh="总面积" data-en="Total Area">总面积</div>
+                    <div class="text-3xl font-black text-mara-text mt-1">3,100+ <span class="text-lg font-normal text-mara-text/60">km²</span></div>
+                    <p class="text-xs text-mara-text/50 mt-2 i18n" data-zh="国家保护区 + 社区保护地" data-en="National Reserve + Conservancies">国家保护区 + 社区保护地</p>
+                </div>
+                <div class="p-6 rounded-xl shadow-sm stat-card">
+                    <div class="text-3xl mb-2">🦁</div>
+                    <div class="text-sm text-mara-text/60 uppercase tracking-wide font-bold i18n" data-zh="哺乳动物" data-en="Mammal Species">哺乳动物</div>
+                    <div class="text-3xl font-black text-mara-text mt-1">80+</div>
+                    <p class="text-xs text-mara-text/50 mt-2 i18n" data-zh="包含著名的“非洲五霸”" data-en="Including the famous Big Five">包含著名的“非洲五霸”</p>
+                </div>
+                <div class="p-6 rounded-xl shadow-sm stat-card">
+                    <div class="text-3xl mb-2">🦅</div>
+                    <div class="text-sm text-mara-text/60 uppercase tracking-wide font-bold i18n" data-zh="鸟类物种" data-en="Bird Species">鸟类物种</div>
+                    <div class="text-3xl font-black text-mara-text mt-1">500+</div>
+                    <p class="text-xs text-mara-text/50 mt-2 i18n" data-zh="记录在案的丰富鸟类" data-en="Rich recorded birdlife">记录在案的丰富鸟类</p>
+                </div>
+                <div class="p-6 rounded-xl shadow-sm stat-card border-b-mara-accent">
+                    <div class="text-3xl mb-2">🤝</div>
+                    <div class="text-sm text-mara-text/60 uppercase tracking-wide font-bold i18n" data-zh="自然保护区数量" data-en="Nature Conservancies">自然保护区数量</div>
+                    <div class="text-3xl font-black text-mara-accent mt-1">26+</div>
+                    <p class="text-xs text-mara-text/50 mt-2 i18n" data-zh="活跃的社区主导保护区" data-en="Active community-led conservancies">活跃的社区主导保护区</p>
+                </div>
+            </div>
+
+            <div class="bg-mara-green text-white p-8 rounded-2xl shadow-md border-l-8 border-mara-accent bg-opacity-95">
+                <h3 class="text-2xl font-serif font-bold mb-4 i18n" data-zh="至关重要的缓冲地带" data-en="A Critical Buffer Zone">至关重要的缓冲地带</h3>
+                <p class="mb-4 leading-relaxed text-white/95 text-lg font-light i18n" data-zh="马赛马拉国家保护区（核心区）面积为1,510平方公里。然而，野生动物的迁徙和生存不认人类划分的边界。周边众多的社区保护区为其增加了约1,600平方公里的栖息地。如果没有这片由马赛人出让的缓冲地带，核心保护区将沦为“生态孤岛”，动物大迁徙的奇观也将面临崩溃的危险。" data-en="The Maasai Mara National Reserve covers 1,510 sq km. However, wildlife migration knows no human boundaries. The surrounding community conservancies add ~1,600 sq km of vital habitat. Without this buffer zone conceded by the Maasai, the core reserve would become an ecological island, threatening the collapse of the Great Migration spectacle.">
+                    马赛马拉国家保护区（核心区）面积为1,510平方公里。然而，野生动物的迁徙和生存不认人类划分的边界。周边众多的社区保护区为其增加了约1,600平方公里的栖息地。如果没有这片由马赛人出让的缓冲地带，核心保护区将沦为“生态孤岛”，动物大迁徙的奇观也将面临崩溃的危险。
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= 野生动物研究与行为档案 ================= -->
+        <section id="sec-wildlife" class="section-content">
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="标志性野生动物研究档案" data-en="Iconic Wildlife Research Dossiers">标志性野生动物研究档案</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="马赛马拉是非洲大型猫科动物密度最高的区域之一，也是绝佳的天然实验室。作为马拉野保学院 (MNHC) 的核心研究方向，我们深度关注物种行为学、生态学以及日益严峻的人兽冲突（HWC）问题。请点击下方图鉴查阅核心掠食者与各大常驻食草动物的专档。" data-en="The Maasai Mara has one of the highest densities of big cats in Africa, serving as a premier natural laboratory. As a core focus of MNHC, we deeply study ethology, ecology, and the escalating Human-Wildlife Conflict (HWC). Click the gallery below for dossiers on core predators and resident herbivores.">
+                    马赛马拉是非洲大型猫科动物密度最高的区域之一，也是绝佳的天然实验室。作为马拉野保学院 (MNHC) 的核心研究方向，我们深度关注物种行为学、生态学以及日益严峻的人兽冲突（HWC）问题。请点击下方图鉴查阅核心掠食者与各大常驻食草动物的专档。
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 mb-8">
+                <div class="w-full lg:w-1/3 bg-[#FDFBF7] p-4 rounded-2xl shadow-sm border border-[#EADCBB] flex flex-col h-[400px] lg:h-[650px] flex-shrink-0">
+                    <h3 class="text-lg font-bold text-mara-text mb-3 px-2 flex items-center justify-between flex-shrink-0">
+                        <span class="i18n" data-zh="选择观测物种" data-en="Select Species">选择观测物种</span>
+                        <span class="text-xs bg-mara-sand/40 px-2 py-1 rounded text-mara-text">MNHC Records</span>
+                    </h3>
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2" id="wildlife-grid">
+                        <!-- JS 动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-2/3 bg-white rounded-2xl shadow-md border-t-8 border-[#4A3728] flex flex-col h-[650px] overflow-hidden" id="w-detail-container">
+                    <div id="wildlife-detail-card" class="p-6 md:p-8 overflow-y-auto custom-scrollbar transition-opacity duration-300 flex-1 w-full h-full">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-mara-sand/50 pb-5 mb-5">
+                            <div class="flex items-center">
+                                <span id="w-icon" class="text-5xl mr-4">🐾</span>
+                                <div>
+                                    <h4 id="w-name" class="text-2xl md:text-3xl font-black font-serif text-mara-text">Loading...</h4>
+                                    <p id="w-tagline" class="text-mara-text/60 italic font-medium mt-1 text-sm md:text-base">Scientific Name</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🧠</span> 行为学洞察" data-en="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🧠</span> Behavioral Insights">
+                                    <span class="bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl">🧠</span> 行为学洞察
+                                </h5>
+                                <p id="w-behavior" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10"></p>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50'>🌍</span> 生态系统角色" data-en="<span class='bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50'>🌍</span> Ecosystem Role">
+                                    <span class="bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50">🌍</span> 生态系统角色
+                                </h5>
+                                <p id="w-ecology" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10"></p>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl'>🛡️</span> 保护现状与人兽冲突" data-en="<span class='bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl'>🛡️</span> Conservation & HWC">
+                                    <span class="bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl">🛡️</span> 保护现状与人兽冲突
+                                </h5>
+                                <p id="w-threats" class="text-mara-text/90 leading-relaxed text-sm md:text-base pl-10 bg-mara-accent/5 p-4 rounded-xl border border-mara-accent/20 mt-2 font-medium"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 大迁徙 ================= -->
+        <section id="sec-migration" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="史诗般的“天国之渡”" data-en="Epic River Crossings & The Great Migration">史诗般的“天国之渡”</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="这里展示了超过200万食草动物在塞伦盖蒂-马拉生态系统中循环迁徙的动态数据。了解迁徙的时间节点和规模，对于野保资源调配和防范跨界人兽冲突具有极大的指导意义。" data-en="This displays the dynamic data of over 2 million herbivores migrating cyclically across the Serengeti-Mara ecosystem. Understanding the timing and scale is vital for conservation resource allocation and mitigating cross-border conflicts.">
+                    这里展示了超过200万食草动物在塞伦盖蒂-马拉生态系统中循环迁徙的动态数据。了解迁徙的时间节点和规模，对于野保资源调配和防范跨界人兽冲突具有极大的指导意义。
+                </p>
+            </div>
+
+            <div class="bg-[#FDFBF7] p-6 rounded-2xl shadow-sm border border-[#EADCBB] mb-8 flex flex-col md:flex-row gap-8 items-center">
+                <div class="w-full md:w-2/3">
+                    <div class="chart-container">
+                        <canvas id="migrationChart"></canvas>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3">
+                    <h4 class="text-xl font-bold text-mara-text mb-3 flex items-center i18n" data-zh="<span class='text-2xl mr-2'>📊</span> 迁徙规模核心数据" data-en="<span class='text-2xl mr-2'>📊</span> Key Migration Data"><span class="text-2xl mr-2">📊</span> 迁徙规模核心数据</h4>
+                    <p class="text-mara-text/70 mb-5 text-sm leading-relaxed border-b border-mara-sand/50 pb-4 i18n" data-zh="大迁徙高度依赖于降雨量。通常，大部队会在7月开始跨越马拉河抵达马赛马拉，并在8-9月达到顶峰。在南返塞伦盖蒂之前，它们会在这里进行大规模的繁衍生息和觅食，沿途也为狮子、猎豹等掠食者提供了丰沛的食物。" data-en="The migration heavily depends on rainfall. Herds typically cross the Mara River arriving in July, peaking in August and September. Before returning south to the Serengeti, they breed and forage extensively, providing abundant food for predators like lions and cheetahs along the way.">
+                        大迁徙高度依赖于降雨量。通常，大部队会在7月开始跨越马拉河抵达马赛马拉，并在8-9月达到顶峰。在南返塞伦盖蒂之前，它们会在这里进行大规模的繁衍生息和觅食，沿途也为狮子、猎豹等掠食者提供了丰沛的食物。
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center bg-mara-bg p-3 rounded-lg border border-mara-sand/30">
+                            <span class="w-4 h-4 rounded-full bg-mara-text mr-3 flex-shrink-0"></span>
+                            <div>
+                                <span class="font-bold text-mara-text block i18n" data-zh="角马 (Wildebeest)" data-en="Wildebeest">角马 (Wildebeest)</span>
+                                <span class="text-xs text-mara-text/60 i18n" data-zh="约 150万 - 绝对的主力军" data-en="~1.5M - The absolute main force">约 150万 - 绝对的主力军</span>
+                            </div>
+                        </li>
+                        <li class="flex items-center bg-mara-bg p-3 rounded-lg border border-mara-sand/30">
+                            <span class="w-4 h-4 rounded-full bg-mara-accent mr-3 flex-shrink-0"></span>
+                            <div>
+                                <span class="font-bold text-mara-text block i18n" data-zh="斑马 (Zebras)" data-en="Zebras">斑马 (Zebras)</span>
+                                <span class="text-xs text-mara-text/60 i18n" data-zh="约 30万 - 迁徙的先锋，吃长草" data-en="~300K - The pioneers, eating tall grass">约 30万 - 迁徙的先锋，吃长草</span>
+                            </div>
+                        </li>
+                        <li class="flex items-center bg-mara-bg p-3 rounded-lg border border-mara-sand/30">
+                            <span class="w-4 h-4 rounded-full bg-mara-sand mr-3 flex-shrink-0"></span>
+                            <div>
+                                <span class="font-bold text-mara-text block i18n" data-zh="汤氏瞪羚 (Gazelles)" data-en="Thomson's Gazelles">汤氏瞪羚 (Gazelles)</span>
+                                <span class="text-xs text-mara-text/60 i18n" data-zh="约 40万 - 尾随其后，吃短草的嫩芽" data-en="~400K - Following behind, eating short grass shoots">约 40万 - 尾随其后，吃短草的嫩芽</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 新增：大迁徙深度解析内容 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:-translate-y-1 transition-transform">
+                    <div class="text-3xl mb-3">🔄</div>
+                    <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="800公里的顺时针循环" data-en="The 800km Clockwise Cycle">800公里的顺时针循环</h4>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="大迁徙并非单一事件，而是一场长达约800公里的持续顺时针长征。它们受降雨量和寻找矿物质丰富的草场需求所驱动，在坦桑尼亚塞伦盖蒂与肯尼亚马赛马拉之间无休止地游走。" data-en="The migration is not a singular event but a continuous, ~800km clockwise trek. Driven by rainfall and mineral needs, they move endlessly between Tanzania's Serengeti and Kenya's Maasai Mara.">大迁徙并非单一事件，而是一场长达约800公里的持续顺时针长征。它们受降雨量和寻找矿物质丰富的草场需求所驱动，在坦桑尼亚塞伦盖蒂与肯尼亚马赛马拉之间无休止地游走。</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:-translate-y-1 transition-transform">
+                    <div class="text-3xl mb-3">🐊</div>
+                    <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="天国之渡：生死狂奔" data-en="River Crossings: Life or Death">天国之渡：生死狂奔</h4>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="横渡马拉河是整个迁徙中最惊险的篇章。庞大的兽群必须克服湍急的河流，并面对水中潜伏的巨型尼罗鳄，以及沿岸严阵以待的狮子和花豹。这是大自然最残酷的生存淘汰场。" data-en="Crossing the Mara River is the most perilous chapter. The massive herds must navigate treacherous currents and face ambush by giant Nile crocodiles, lions, and leopards—nature's ultimate survival test.">横渡马拉河是整个迁徙中最惊险的篇章。庞大的兽群必须克服湍急的河流，并面对水中潜伏的巨型尼罗鳄，以及沿岸严阵以待的狮子和花豹。这是大自然最残酷的生存淘汰场。</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:-translate-y-1 transition-transform border-t-4 border-mara-green">
+                    <div class="text-3xl mb-3">🇰🇪</div>
+                    <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="被忽视的“洛伊塔本土迁徙”" data-en="The Overlooked 'Loita Migration'">被忽视的“洛伊塔本土迁徙”</h4>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="除了跨境大迁徙，这里还存在完全在肯尼亚境内的本土迁徙。约10万头角马和斑马从东部洛伊塔平原迁入纳博伊肖等保护区。它们的生存高度依赖那些未被人类农业围栏切断的原始生态走廊。" data-en="Beyond the cross-border spectacle lies the 'Loita Migration' entirely within Kenya. ~100,000 wildebeest and zebras move from the eastern Loita Plains into conservancies like Naboisho, heavily relying on unblocked ecological corridors.">除了跨境大迁徙，这里还存在完全在肯尼亚境内的本土迁徙。约10万头角马和斑马从东部洛伊塔平原迁入纳博伊肖等保护区。它们的生存高度依赖那些未被人类农业围栏切断的原始生态走廊。</p>
+                </div>
+            </div>
+
+            <div class="bg-mara-text text-white p-8 rounded-2xl shadow-md border-t-4 border-mara-sand relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-[180px] leading-none">🐃</div>
+                <h4 class="font-bold text-2xl font-serif mb-4 flex items-center i18n" data-zh="<span class='text-mara-sand mr-3'>🌍</span> 大迁徙的生态基石作用" data-en="<span class='text-mara-sand mr-3'>🌍</span> Ecological Keystone of the Migration">
+                    <span class="text-mara-sand mr-3">🌍</span> 大迁徙的生态基石作用
+                </h4>
+                <p class="text-white/90 leading-relaxed text-base md:text-lg font-light i18n" data-zh="大迁徙不只是一次动物集会，它是一套巨型的自然生态循环系统。角马被誉为“草原的巨型割草机”，数百万头食草动物的啃食防止了长草的过度蔓延，从而大幅降低了旱季野火的风险；它们的粪便和践踏翻动了土壤，为大草原提供了巨量的养分循环。同时，沿途留下的体力不支或被捕杀的动物尸体，直接滋养了从顶级掠食者（狮子、鬣狗）到清道夫（秃鹫、猛雕）的整条食物链。国家野生动物普查数据证实，保护大迁徙不仅需要保卫核心国家保护区，更需要保护周边不受阻碍的社区扩散区（Dispersal Areas）。" data-en="The migration is a colossal ecological engine. Wildebeests act as the 'giant lawnmowers of the savanna.' The grazing of millions prevents tall grass overgrowth, drastically reducing dry-season wildfire risks. Their dung and trampling turn the soil, driving massive nutrient cycling. Meanwhile, the casualties along the route sustain the entire food chain, from apex predators to scavengers. Wildlife censuses confirm that protecting this migration requires securing not just the core Reserve, but the unimpeded community dispersal areas surrounding it.">
+                    大迁徙不只是一次动物集会，它是一套巨型的自然生态循环系统。角马被誉为“草原的巨型割草机”，数百万头食草动物的啃食防止了长草的过度蔓延，从而大幅降低了旱季野火的风险；它们的粪便和践踏翻动了土壤，为大草原提供了巨量的养分循环。同时，沿途留下的体力不支或被捕杀的动物尸体，直接滋养了从顶级掠食者（狮子、鬣狗）到清道夫（秃鹫、猛雕）的整条食物链。国家野生动物普查数据证实，保护大迁徙不仅需要保卫核心国家保护区，更需要保护周边不受阻碍的社区扩散区（Dispersal Areas）。
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= 马拉野保学院 (MNHC) ================= -->
+        <section id="sec-mnhc" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="马拉野保学院 (Mara Natural History Center)" data-en="Mara Natural History Center (MNHC)">马拉野保学院 (Mara Natural History Center)</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl mb-6 i18n" data-zh="马拉野保学院是由中国野保探险家<b>星巴</b>、HWF栖息地守望者基金会<b>曹筱玲</b>以及马赛族酋长<b>西蒙·马萨哥</b>共同发起的一个致力于通过研究和教育项目来保护和恢复野生动物栖息地的学术团队。" data-en="The Mara Natural History Center (MNHC) is an academic team founded by Chinese wildlife explorer <b>Simba</b>, HWF Habitat Watch Foundation's <b>Xiaoling Cao</b>, and Maasai Chief <b>Simon Masago</b>. The center is dedicated to protecting and restoring wildlife habitats through research and educational programs.">
+                    马拉野保学院是由中国野保探险家<b>星巴</b>、HWF栖息地守望者基金会<b>曹筱玲</b>以及马赛族酋长<b>西蒙·马萨哥</b>共同发起的一个致力于通过研究和教育项目来保护和恢复野生动物栖息地的学术团队。
+                </p>
+                <div class="bg-mara-green/10 border-l-4 border-mara-green p-5 rounded-r-xl">
+                    <p class="text-mara-text/90 i18n" data-zh="通过15年的努力，目前我们已经在马赛马拉帮助建立了<b>26个自然保护地</b>，总面积超过<b>1,600平方公里</b>。这不仅为野生动物创造了更多的生存空间和迁徙廊道，也造福当地牧民实现了更多收入来源。马赛马拉是世界八大自然奇迹之一，每年吸引约40万高收入国际游客（其中包括5万中国游客），我们的努力正带动马赛马拉地区实现更可持续的绿色经济发展。" data-en="Through 15 years of relentless effort, we have helped establish <b>26 conservancies</b> in the Mara, covering over <b>1,600 sq km</b>. This secures vital habitats and corridors for wildlife while providing sustainable income for local pastoralists. The Mara is one of the 8 natural wonders of the world, attracting ~400k international tourists annually (including 50k from China). Our work drives a sustainable green economy in the region.">
+                        通过15年的努力，目前我们已经在马赛马拉帮助建立了<b>26个自然保护地</b>，总面积超过<b>1,600平方公里</b>。这不仅为野生动物创造了更多的生存空间和迁徙廊道，也造福当地牧民实现了更多收入来源。马赛马拉是世界八大自然奇迹之一，每年吸引约40万高收入国际游客（其中包括5万中国游客），我们的努力正带动马赛马拉地区实现更可持续的绿色经济发展。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 直接支持的自然保护地 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>🛡️</span> MNHC 直接支持的自然保护地" data-en="<span class='text-3xl mr-3'>🛡️</span> Conservancies Directly Supported by MNHC">
+                    <span class="text-3xl mr-3">🛡️</span> MNHC 直接支持的自然保护地
+                </h3>
+                <p class="text-mara-text/80 mb-6 i18n" data-zh="马拉野保学院目前直接支持的自然保护地总面积达到 <b>1,741 平方公里</b>，约等于 <b>2.4 个新加坡</b> 或者 <b>3.5 个香港</b> 的陆地面积。" data-en="The total area of conservancies directly supported by MNHC reaches <b>1,741 sq km</b>—roughly equivalent to <b>2.4 times the landmass of Singapore</b> or <b>3.5 times that of Hong Kong</b>.">
+                    马拉野保学院目前直接支持的自然保护地总面积达到 <b>1,741 平方公里</b>，约等于 <b>2.4 个新加坡</b> 或者 <b>3.5 个香港</b> 的陆地面积。
+                </p>
+
+                <div class="bg-white rounded-2xl shadow-sm border-t-4 border-mara-sand overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-mara-text">
+                            <thead class="bg-mara-bg border-b border-mara-sand/40">
+                                <tr>
+                                    <th class="px-6 py-4 font-bold i18n" data-zh="保护地" data-en="Conservancy">保护地</th>
+                                    <th class="px-6 py-4 font-bold i18n" data-zh="英文名称" data-en="English Name">英文名称</th>
+                                    <th class="px-6 py-4 font-bold i18n" data-zh="面积" data-en="Area (Acres)">面积</th>
+                                    <th class="px-6 py-4 font-bold text-mara-green i18n" data-zh="换算后面积 (km²)" data-en="Area (km²)">换算后面积 (km²)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-mara-sand/20">
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold">马赛马拉国家保护区</td>
+                                    <td class="px-6 py-4 text-mara-text/80">Maasai Mara National Reserve</td>
+                                    <td class="px-6 py-4 text-mara-text/80">—</td>
+                                    <td class="px-6 py-4 font-black text-mara-green">1,510.0</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold">奥肯耶保护区</td>
+                                    <td class="px-6 py-4 text-mara-text/80">Ol Kinyei Conservancy</td>
+                                    <td class="px-6 py-4 text-mara-text/80">18,700 英亩</td>
+                                    <td class="px-6 py-4 font-black text-mara-green">75.7</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold">奥拉罗保护区</td>
+                                    <td class="px-6 py-4 text-mara-text/80">Olarro Conservancy</td>
+                                    <td class="px-6 py-4 text-mara-text/80">20,000 英亩</td>
+                                    <td class="px-6 py-4 font-black text-mara-green">80.9</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold">马拉瑞波伊保护区</td>
+                                    <td class="px-6 py-4 text-mara-text/80">Mara Ripoi Conservancy</td>
+                                    <td class="px-6 py-4 text-mara-text/80">13,500 英亩</td>
+                                    <td class="px-6 py-4 font-black text-mara-green">54.6</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold">纳舒莱保护区</td>
+                                    <td class="px-6 py-4 text-mara-text/80">Nashulai Conservancy</td>
+                                    <td class="px-6 py-4 text-mara-text/80">5,000 英亩</td>
+                                    <td class="px-6 py-4 font-black text-mara-green">20.2</td>
+                                </tr>
+                                <tr class="bg-mara-green/10 border-t-2 border-mara-green">
+                                    <td class="px-6 py-4 font-black i18n" data-zh="总面积合计" data-en="Total Area">总面积合计</td>
+                                    <td class="px-6 py-4"></td>
+                                    <td class="px-6 py-4"></td>
+                                    <td class="px-6 py-4 font-black text-mara-green text-lg">1,741.4 km²</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12大重点项目 -->
+            <div>
+                <h3 class="text-2xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>🌟</span> 12大可持续发展重点项目" data-en="<span class='text-3xl mr-3'>🌟</span> 12 Key Sustainable Development Projects">
+                    <span class="text-3xl mr-3">🌟</span> 12大可持续发展重点项目
+                </h3>
+                <p class="text-mara-text/80 mb-8 i18n" data-zh="为了更多支持马赛马拉地区的生态环境和野生动物保护，实现人与自然和谐共生的可持续发展，马拉野保学院陆续发起了以下重点项目，得到了社会各界的广泛支持，欢迎更多朋友能够来马赛马拉参与和支持这些项目。" data-en="To further support the ecological environment, wildlife conservation, and human-nature coexistence in the Mara, MNHC has launched the following key projects, receiving widespread societal support. We welcome more friends to visit the Maasai Mara to participate in and support these projects.">
+                    为了更多支持马赛马拉地区的生态环境和野生动物保护，实现人与自然和谐共生的可持续发展，马拉野保学院陆续发起了以下重点项目，得到了社会各界的广泛支持，欢迎更多朋友能够来马赛马拉参与和支持这些项目。
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🏞️</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="1. 转换更多牧场为自然保护地" data-en="1. Converting Pastures into Conservancies">1. 转换更多牧场为自然保护地</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="<b>终极目标。</b>通过引进野奢酒店支付地租和巡护员工资，帮助牧民提高收入实现自我造血。每英亩年租金约20美元，一个完整生态系统的保护地需1万英亩（每年20万美元租金）。欢迎各界以各种方式参与支持。" data-en="<b>The Ultimate Goal.</b> Leasing pastoral lands to create conservancies. Funding comes from eco-lodges, paying rents and ranger salaries. A functional conservancy needs ~10,000 acres ($200k/year). We welcome global support."><b>终极目标。</b>通过引进野奢酒店支付地租和巡护员工资，帮助牧民提高收入实现自我造血。每英亩年租金约20美元，一个完整生态系统的保护地需1万英亩（每年20万美元租金）。欢迎各界以各种方式参与支持。</p>
+                    </div>
+                    <!-- 2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🏛️</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="2. 马赛马拉生命科学博物馆" data-en="2. MNHC Life Science Museum">2. 马赛马拉生命科学博物馆</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="位于内罗毕通往马赛马拉的必经之路恩苏瓦尼（Ngoswani)，距离马赛马拉国家保护区的主大门Sekenani Gate只有半小时车程，旨在帮助来马赛马拉的游客系统了解马赛马拉地理、历史、生态、野生动物及马赛族民俗传统，提供参与本地野生动物保护项目的通道和机会。" data-en="Located in Ngoswani on the main route from Nairobi to the Mara, just a half-hour drive from the main Sekenani Gate. It aims to help tourists systematically understand the geography, history, ecology, wildlife, and Maasai traditions of the Mara, providing channels and opportunities to participate in local wildlife conservation projects.">位于内罗毕通往马赛马拉的必经之路恩苏瓦尼（Ngoswani)，距离马赛马拉国家保护区的主大门Sekenani Gate只有半小时车程，旨在帮助来马赛马拉的游客系统了解马赛马拉地理、历史、生态、野生动物及马赛族民俗传统，提供参与本地野生动物保护项目的通道和机会。</p>
+                    </div>
+                    <!-- 3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🌿</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="3. 马赛马拉草药理疗项目" data-en="3. Maasai Herbal Therapy Project">3. 马赛马拉草药理疗项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="马赛人以草药治病，是人均寿命达80岁的长寿部落。该项目研发基于草药的产品（自然疗愈、推拿、精油、香囊等），为肯尼亚及全球游客提供维护健康的自然解决方案。" data-en="The Maasai are known for longevity, heavily relying on herbal medicine. This project develops herbal products (natural healing, massage oils, sachets) to provide health solutions for global visitors.">马赛人以草药治病，是人均寿命达80岁的长寿部落。该项目研发基于草药的产品（自然疗愈、推拿、精油、香囊等），为肯尼亚及全球游客提供维护健康的自然解决方案。</p>
+                    </div>
+                    <!-- 4 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🐔</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="4. 马赛马拉妇女养鸡项目" data-en="4. Maasai Women Poultry Project">4. 马赛马拉妇女养鸡项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="长期的过度放牧导致草原植被退化。该项目旨在帮助马赛族妇女带来收入，提高妇女地位，减少对传统放牧的依赖，有效解决植被退化与水土流失问题。" data-en="Overgrazing degrades savanna vegetation. This project empowers Maasai women by providing poultry farming income, raising their social status, and reducing dependence on cattle grazing.">长期的过度放牧导致草原植被退化。该项目旨在帮助马赛族妇女带来收入，提高妇女地位，减少对传统放牧的依赖，有效解决植被退化与水土流失问题。</p>
+                    </div>
+                    <!-- 5 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🍯</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="5. 马赛马拉蜂蜜项目" data-en="5. Maasai Mara Honey Project">5. 马赛马拉蜂蜜项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="马赛马拉药用植物资源丰富，是养蜂理想之地。养蜂还可以作为天然屏障防止大象侵扰农田。一个蜂箱围栏（每年产10-20公斤蜂蜜）直接变成了“会赚钱的保护墙”。" data-en="Rich in medicinal plants, the Mara is ideal for beekeeping. Beehive fences act as natural deterrents against crop-raiding elephants, turning fences into 'profitable protection walls' (10-20kg honey/year/hive).">马赛马拉药用植物资源丰富，是养蜂理想之地。养蜂还可以作为天然屏障防止大象侵扰农田。一个蜂箱围栏（每年产10-20公斤蜂蜜）直接变成了“会赚钱的保护墙”。</p>
+                    </div>
+                    <!-- 6 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🥬</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="6. 马赛马拉蔬菜种植项目" data-en="6. Vegetable Planting Project">6. 马赛马拉蔬菜种植项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="马赛人传统以牛羊肉为食，不吃果蔬。在确保水源的情况下，土壤极适合种植蔬菜。鼓励种植既能减少对肉食放牧的过度依赖，又能带来健康的饮食结构与额外收入。" data-en="Traditionally, the Maasai eat meat and milk, not vegetables. With secure water sources, the fertile soil is perfect for agriculture. This project reduces reliance on grazing and improves dietary health and income.">马赛人传统以牛羊肉为食，不吃果蔬。在确保水源的情况下，土壤极适合种植蔬菜。鼓励种植既能减少对肉食放牧的过度依赖，又能带来健康的饮食结构与额外收入。</p>
+                    </div>
+                    <!-- 7 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">⚽</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="7. 非洲草原运动会项目" data-en="7. African Savanna Games">7. 非洲草原运动会项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="自2015年起已举办6届。组织足球、短跑、跳高、拔河、飞盘甚至颠乒乓球等项目，极大促进了中国与非洲人民之间的深厚友谊与文化交流。" data-en="Hosted 6 times since 2015. Includes football, sprinting, high jump, tug-of-war, frisbee, and table tennis juggling. It significantly promotes friendship and cultural exchange between Chinese and African people.">自2015年起已举办6届。组织足球、短跑、跳高、拔河、飞盘甚至颠乒乓球等项目，极大促进了中国与非洲人民之间的深厚友谊与文化交流。</p>
+                    </div>
+                    <!-- 8 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🎨</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="8. 非洲草原艺术节项目" data-en="8. African Savanna Art Festival">8. 非洲草原艺术节项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="“自然与文化部落全球共创计划”由星巴与酋长尼尔森发起。招募全球50位创作者前往纳舒莱私人保护区，共建水塘、文化中心及大地艺术。首届将于2026年6月举办。" data-en="A global co-creation plan by Simba and Chief Nelson. Recruiting 50 creators globally to Nashulai Conservancy to co-build waterholes, cultural centers, and land art. The first festival is in June 2026.">“自然与文化部落全球共创计划”由星巴与酋长尼尔森发起。招募全球50位创作者前往纳舒莱私人保护区，共建水塘、文化中心及大地艺术。首届将于2026年6月举办。</p>
+                    </div>
+                    <!-- 9 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🪡</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="9. 马赛妇女手工培训学校" data-en="9. Women's Handicraft School">9. 马赛妇女手工培训学校</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="通过培训马赛妇女制作精美的传统手工产品，直接提升妇女的家庭经济地位，提高牧民总收入，从而进一步减少对破坏环境的过度放牧的依赖。" data-en="Trains Maasai women to create exquisite traditional handicrafts. This directly elevates their economic status within the family and boosts pastoralist income, reducing dependence on destructive overgrazing.">通过培训马赛妇女制作精美的传统手工产品，直接提升妇女的家庭经济地位，提高牧民总收入，从而进一步减少对破坏环境的过度放牧的依赖。</p>
+                    </div>
+                    <!-- 10 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition">
+                        <div class="text-3xl mb-3">🎓</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="10. 全球青少年领导力发展" data-en="10. Youth Leadership Development">10. 全球青少年领导力发展</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="在马赛马拉一线，通过指导全球青少年亲身参与严谨的科学研究和生态可持续发展项目，培养自然敬畏之心，并帮助他们申请全球顶级名校。" data-en="Guides global youth in rigorous scientific research and ecological sustainability projects right on the Mara frontline. This cultivates reverence for nature and assists them in applying to top global universities.">在马赛马拉一线，通过指导全球青少年亲身参与严谨的科学研究和生态可持续发展项目，培养自然敬畏之心，并帮助他们申请全球顶级名校。</p>
+                    </div>
+                    <!-- 11 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition border-t-4 border-t-[#D22B2B]">
+                        <div class="text-3xl mb-3">🦁</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="11. 减少人兽冲突项目" data-en="11. HWC Mitigation Project">11. 减少人兽冲突项目</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="自2015年起，我们陆续在马赛马拉为饱受狮子掠食之苦的牧民修建了防狮围栏（Predator-proof Bomas），总数已达16个，极大地缓解了报复性猎杀，保护了狮群。" data-en="Since 2015, we have built 16 predator-proof Bomas for pastoralists suffering from lion depredation. This effectively mitigates human-wildlife conflict and protects vulnerable lion prides from retaliatory killings.">自2015年起，我们陆续在马赛马拉为饱受狮子掠食之苦的牧民修建了防狮围栏（Predator-proof Bomas），总数已达16个，极大地缓解了报复性猎杀，保护了狮群。</p>
+                    </div>
+                    <!-- 12 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-mara-sand/40 hover:shadow-md hover:-translate-y-1 transition border-t-4 border-t-mara-green">
+                        <div class="text-3xl mb-3">🚁</div>
+                        <h4 class="font-bold text-mara-text mb-2 i18n" data-zh="12. 反盗猎与日常巡护支持" data-en="12. Anti-Poaching & Patrol Support">12. 反盗猎与日常巡护支持</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="自2013年起，先后向KWS、国家保护区及多个私人保护区捐赠了5辆越野车、36辆摩托车，以及大量红外相机、GPS、帐篷等硬核物资，全面支持一线巡护。" data-en="Since 2013, we have donated 5 SUVs, 36 motorcycles, and vast amounts of gear (camera traps, GPS, tents) to KWS, MMNR, and private conservancies to comprehensively support frontline anti-poaching patrols.">自2013年起，先后向KWS、国家保护区及多个私人保护区捐赠了5辆越野车、36辆摩托车，以及大量红外相机、GPS、帐篷等硬核物资，全面支持一线巡护。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 保护区矩阵 ================= -->
+        <section id="sec-conservancies" class="section-content">
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="马赛马拉保护区深度档案" data-en="Maasai Mara Conservancy Dossiers">马赛马拉保护区深度档案</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="以下列出了构成大马拉生态系统的**所有核心区域**。点击左侧列表，查阅由马拉野保学院 (MNHC) 为您整理的详细档案：包含地理环境、门票政策、核心物种看点、以及社区管理模式。" data-en="Below are all the core areas constituting the Greater Mara ecosystem. Click the list to view detailed dossiers compiled by the Mara Natural History Center (MNHC): including geography, ticket policies, wildlife highlights, and community management models.">
+                    以下列出了构成大马拉生态系统的**所有核心区域**。点击左侧列表，查阅由马拉野保学院 (MNHC) 为您整理的详细档案：包含地理环境、门票政策、核心物种看点、以及社区管理模式。
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 mb-8">
+                <div class="w-full lg:w-1/3 bg-[#FDFBF7] p-4 rounded-2xl shadow-sm border border-[#EADCBB] flex flex-col h-[350px] lg:h-[650px] flex-shrink-0">
+                    <h3 class="text-lg font-bold text-mara-text mb-3 px-2 flex items-center justify-between flex-shrink-0">
+                        <span class="i18n" data-zh="选择保护区" data-en="Select Conservancy">选择保护区</span>
+                        <span class="text-xs bg-mara-sand/40 px-2 py-1 rounded text-mara-text i18n" data-zh="15个区域" data-en="15 Areas">15个区域</span>
+                    </h3>
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2" id="conservancy-grid">
+                        <!-- JS 动态生成按钮 -->
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-2/3 bg-white rounded-2xl shadow-md border-t-8 border-mara-green flex flex-col h-[600px] lg:h-[650px] overflow-hidden">
+                    <div id="conservancy-detail-card" class="p-6 md:p-8 overflow-y-auto custom-scrollbar transition-opacity duration-300 flex-1 w-full h-full">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-mara-sand/50 pb-5 mb-5">
+                            <div>
+                                <h4 id="c-name" class="text-2xl md:text-3xl font-black font-serif text-mara-text">Loading...</h4>
+                                <p id="c-tagline" class="text-mara-accent font-medium mt-2 text-sm md:text-base">Loading dossier...</p>
+                            </div>
+                            <span id="c-area" class="mt-3 sm:mt-0 bg-mara-bg border border-mara-sand text-mara-text px-4 py-1.5 rounded-full text-sm font-bold shadow-sm whitespace-nowrap">-- km²</span>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div id="c-tickets-container" style="display: none;">
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl'>🎫</span> 门票与访问信息" data-en="<span class='bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl'>🎫</span> Ticket & Access Info">
+                                    <span class="bg-mara-accent/10 text-mara-accent p-1.5 rounded-lg mr-2 text-xl">🎫</span> 门票与访问信息
+                                </h5>
+                                <p id="c-tickets" class="text-mara-text/90 leading-relaxed text-sm md:text-base pl-10 bg-mara-accent/5 p-4 rounded-xl border border-mara-accent/20 mt-2 font-medium"></p>
+                            </div>
+
+                            <div id="c-gates-container" style="display: none;">
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🚙</span> 主要入口 (Gates)" data-en="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🚙</span> Main Gates">
+                                    <span class="bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl">🚙</span> 主要入口 (Gates)
+                                </h5>
+                                <p id="c-gates" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10 font-semibold"></p>
+                            </div>
+
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>📍</span> 地理与概况" data-en="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>📍</span> Geography & Overview">
+                                    <span class="bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl">📍</span> 地理与概况
+                                </h5>
+                                <p id="c-geo" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10"></p>
+                            </div>
+                            
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🛩️</span> 主要机场" data-en="<span class='bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl'>🛩️</span> Main Airstrips">
+                                    <span class="bg-mara-sand/30 p-1.5 rounded-lg mr-2 text-xl">🛩️</span> 主要机场
+                                </h5>
+                                <p id="c-airstrip" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10 font-semibold"></p>
+                            </div>
+
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50'>🦁</span> 生态与野生动物看点" data-en="<span class='bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50'>🦁</span> Ecology & Wildlife Highlights">
+                                    <span class="bg-mara-bg p-1.5 rounded-lg mr-2 text-xl border border-mara-sand/50">🦁</span> 生态与野生动物看点
+                                </h5>
+                                <p id="c-wildlife" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10"></p>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold text-mara-text flex items-center mb-2 i18n" data-zh="<span class='bg-mara-green/10 text-mara-green p-1.5 rounded-lg mr-2 text-xl'>🤝</span> 社区与保护管理模式" data-en="<span class='bg-mara-green/10 text-mara-green p-1.5 rounded-lg mr-2 text-xl'>🤝</span> Community & Management Model">
+                                    <span class="bg-mara-green/10 text-mara-green p-1.5 rounded-lg mr-2 text-xl">🤝</span> 社区与保护管理模式
+                                </h5>
+                                <p id="c-mgmt" class="text-mara-text/80 leading-relaxed text-sm md:text-base pl-10 bg-mara-bg p-4 rounded-xl border border-mara-sand/20 mt-2"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 主要野保机构 ================= -->
+        <section id="sec-orgs" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="守护力量：主要野保机构" data-en="Guardians: Key Conservation Organizations">守护力量：主要野保机构</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="保护大马赛马拉这片广袤的生态家园，是一项庞大而复杂的系统工程。这里活跃着众多专业的野生动物保护组织，涵盖了从反盗猎巡逻、物种科学研究、人兽冲突化解到社区赋能的各个战线。" data-en="Protecting the vast Maasai Mara ecosystem is a complex undertaking. Many professional wildlife conservation organizations are active here, covering anti-poaching, scientific research, human-wildlife conflict mitigation, and community empowerment.">
+                    保护大马赛马拉这片广袤的生态家园，是一项庞大而复杂的系统工程。这里活跃着众多专业的野生动物保护组织，涵盖了从反盗猎巡逻、物种科学研究、人兽冲突化解到社区赋能的各个战线。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-t-8 border-mara-accent hover:-translate-y-1 transition-transform">
+                    <div class="text-4xl mb-4">🎓</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉野保学院 (MNHC)" data-en="Mara Natural History Center (MNHC)">马拉野保学院 (MNHC)</h3>
+                    <p class="text-sm text-mara-text/70 mb-3 border-b border-mara-sand/30 pb-3 i18n" data-zh="由中国野保探险家星巴创立，扎根马赛马拉一线。" data-en="Founded by Chinese wildlife explorer Simba, rooted in the Mara frontline.">由中国野保探险家星巴创立，扎根马赛马拉一线。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="致力于野生动物行为研究、化解人兽冲突与栖息地恢复。连接全球华人力量参与非洲野保行动，推动人与自然和谐共生的理念，是中非野保合作的重要桥梁。" data-en="Dedicated to wildlife behavior research, conflict mitigation, and habitat restoration. Connecting global Chinese communities to African conservation, promoting harmony between humans and nature, bridging Sino-African cooperation.">致力于野生动物行为研究、化解人兽冲突与栖息地恢复。连接全球华人力量参与非洲野保行动，推动人与自然和谐共生的理念，是中非野保合作的重要桥梁。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
+                    <div class="text-4xl mb-4">🤝</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="大马拉保护区协会 (MMWCA)" data-en="Maasai Mara Conservancies (MMWCA)">大马拉保护区协会 (MMWCA)</h3>
+                    <p class="text-sm text-mara-text/70 mb-3 border-b border-mara-sand/30 pb-3 i18n" data-zh="统筹整个社区保护区网络的伞形组织。" data-en="The umbrella organization coordinating the entire network.">统筹整个社区保护区网络的伞形组织。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="协调15个马赛社区保护区的利益，推动土地租赁模式的规范化，确保旅游收入公平回馈给当地马赛地主，保障核心生态走廊的畅通无阻。" data-en="Coordinates 15 Maasai conservancies, standardizing land lease models, ensuring fair tourism revenue distribution to Maasai landowners, and securing core ecological corridors.">协调15个马赛社区保护区的利益，推动土地租赁模式的规范化，确保旅游收入公平回馈给当地马赛地主，保障核心生态走廊的畅通无阻。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
+                    <div class="text-4xl mb-4">🐘</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉大象项目 (MEP)" data-en="Mara Elephant Project (MEP)">马拉大象项目 (MEP)</h3>
+                    <p class="text-sm text-mara-text/70 mb-3 border-b border-mara-sand/30 pb-3 i18n" data-zh="专注于大象保护与人象冲突化解。" data-en="Focused on elephant conservation and conflict mitigation.">专注于大象保护与人象冲突化解。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="利用先进的GPS项圈追踪大象移动轨迹，并部署直升机和快速反应部队，驱赶误入农田的大象，打击象牙盗猎，保卫马赛马拉关键的森林栖息地。" data-en="Uses GPS collars to track elephants, deploying helicopters and rapid response units to drive elephants from farms, combat ivory poaching, and protect critical forest habitats.">利用先进的GPS项圈追踪大象移动轨迹，并部署直升机和快速反应部队，驱赶误入农田的大象，打击象牙盗猎，保卫马赛马拉关键的森林栖息地。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
+                    <div class="text-4xl mb-4">🐆</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉猛兽保护项目 (MPCP)" data-en="Mara Predator Conservation (MPCP)">马拉猛兽保护项目 (MPCP)</h3>
+                    <p class="text-sm text-mara-text/70 mb-3 border-b border-mara-sand/30 pb-3 i18n" data-zh="聚焦大型食肉动物的科学研究与保护。" data-en="Focused on research and conservation of large carnivores.">聚焦大型食肉动物的科学研究与保护。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="长期监测狮子、猎豹、花豹的种群动态。与社区深度合作建设防掠食者围栏（Bomas），从根本上减少马赛人因牲畜被捕杀而进行的报复性猎杀。" data-en="Long-term monitoring of lion, cheetah, and leopard populations. Partners with communities to build predator-proof Bomas, fundamentally reducing retaliatory killings by pastoralists.">长期监测狮子、猎豹、花豹的种群动态。与社区深度合作建设防掠食者围栏（Bomas），从根本上减少马赛人因牲畜被捕杀而进行的报复性猎杀。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
+                    <div class="text-4xl mb-4">🚑</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="SWT 马拉移动兽医单元" data-en="SWT Mara Mobile Vet Unit">SWT 马拉移动兽医单元</h3>
+                    <p class="text-sm text-mara-text/70 mb-3 border-b border-mara-sand/30 pb-3 i18n" data-zh="由谢尔德里克野生动物基金会主导运营。" data-en="Operated by the Sheldrick Wildlife Trust.">由谢尔德里克野生动物基金会主导运营。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="与肯尼亚野生动物服务局（KWS）携手，在广袤的草原上提供紧急兽医救助，其首要任务之一是为被盗猎者布置的钢丝套误伤的野生动物进行拆除和治疗。" data-en="Partners with Kenya Wildlife Service (KWS) to provide emergency veterinary care across the savannah, primarily treating wildlife injured by poachers' wire snares.">与肯尼亚野生动物服务局（KWS）携手，在广袤的草原上提供紧急兽医救助，其首要任务之一是为被盗猎者布置的钢丝套误伤的野生动物进行拆除和治疗。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 如何抵达马赛马拉 ================= -->
+        <section id="sec-logistics" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="交通指南：如何抵达马赛马拉" data-en="Logistics: Getting to the Maasai Mara">交通指南：如何抵达马赛马拉</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="全球各地的游客多数会通过内罗毕的乔莫·肯雅塔国际机场（JKIA）抵达肯尼亚。如果计划从内罗毕直接前往马赛马拉，强烈建议选择早上出发以避免夜间行车——通往马赛马拉的道路在夜间存在安全隐患且视线不佳。前往马赛马拉主要有陆路和航空两种方式。" data-en="Most global tourists arrive via Jomo Kenyatta International Airport (JKIA) in Nairobi. If heading straight to the Mara, it is highly recommended to depart in the morning to avoid night driving due to safety and poor visibility. There are two main ways to reach the Mara: by road or by air.">
+                    全球各地的游客多数会通过内罗毕的乔莫·肯雅塔国际机场（JKIA）抵达肯尼亚。如果计划从内罗毕直接前往马赛马拉，强烈建议选择早上出发以避免夜间行车——通往马赛马拉的道路在夜间存在安全隐患且视线不佳。前往马赛马拉主要有陆路和航空两种方式。
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-8 mb-10">
+                <div class="bg-[#FDFBF7] p-6 md:p-8 rounded-2xl shadow-sm border border-[#EADCBB] relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-[#4A3728]"></div>
+                    <h3 class="text-2xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>🚙</span> 方式一：陆路驾驶 (By Road)" data-en="<span class='text-3xl mr-3'>🚙</span> Option 1: By Road">
+                        <span class="text-3xl mr-3">🚙</span> 方式一：陆路驾驶 (By Road)
+                    </h3>
+                    <div class="space-y-4 text-mara-text/80 leading-relaxed">
+                        <p class="i18n" data-zh="从内罗毕到马赛马拉国家保护区（以塞凯纳尼大门 Sekenani Gate 为例）全程约 <b>239公里</b>。如果不堵车，通常需要 <b>4小时</b> 左右。" data-en="From Nairobi to the Maasai Mara National Reserve (e.g., Sekenani Gate) is approx <b>239 km</b>. It takes about <b>4 hours</b> without traffic.">
+                            从内罗毕到马赛马拉国家保护区（以塞凯纳尼大门 Sekenani Gate 为例）全程约 <b>239公里</b>。如果不堵车，通常需要 <b>4小时</b> 左右。
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li class="i18n" data-zh="<b>车速限制：</b> 沿途会有几个警察测速点，请注意车速绝不要超过 80公里/小时。" data-en="<b>Speed Limit:</b> There are several police speed checks along the way. Do not exceed 80 km/h."><b>车速限制：</b> 沿途会有几个警察测速点，请注意车速绝不要超过 80公里/小时。</li>
+                            <li class="i18n" data-zh="<b>途经 MNHC 基地：</b> 从纳罗克（Narok）镇到恩苏瓦尼（Ngoswani）有 52公里。我们的 <b class='text-mara-green'>马赛马拉自然历史中心（马赛马拉生命科学博物馆+野保学院）</b> 就坐落在这里（坐标：-1.4096322, 35.5906056），在这里甚至可以听到周边奥拉罗保护区的狮吼声！" data-en="<b>Passing MNHC Base:</b> From Narok to Ngoswani is 52 km. Our <b class='text-mara-green'>Mara Natural History Center (Life Science Museum + Conservation Academy)</b> is located here (Coords: -1.4096322, 35.5906056), where you can hear lions from the Olarro Conservancy!"><b>途经 MNHC 基地：</b> 从纳罗克（Narok）镇到恩苏瓦尼（Ngoswani）有 52公里。我们的 <b class='text-mara-green'>马赛马拉自然历史中心（马赛马拉生命科学博物馆+野保学院）</b> 就坐落在这里（坐标：-1.4096322, 35.5906056），在这里甚至可以听到周边奥拉罗保护区的狮吼声！</li>
+                            <li class="i18n" data-zh="<b>路况提示：</b> 从恩苏瓦尼到塞凯纳尼门最后 32公里 全程路况很好，不会堵车，但务必要特别注意避让横穿马路的牛羊群。" data-en="<b>Road Conditions:</b> The final 32 km from Ngoswani to Sekenani Gate is smoothly paved with no traffic, but be extremely careful of livestock crossing the road."><b>路况提示：</b> 从恩苏瓦尼到塞凯纳尼门最后 32公里 全程路况很好，不会堵车，但务必要特别注意避让横穿马路的牛羊群。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-md border-t-8 border-mara-green">
+                    <h3 class="text-2xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>✈️</span> 方式二：支线航班 (By Air)" data-en="<span class='text-3xl mr-3'>✈️</span> Option 2: By Air">
+                        <span class="text-3xl mr-3">✈️</span> 方式二：支线航班 (By Air)
+                    </h3>
+                    <p class="text-mara-text/80 mb-6 leading-relaxed i18n" data-zh="在内罗毕的 <b>威尔森机场 (Wilson Airport)</b> 乘坐支线小飞机前往马赛马拉，只需要 <b>45—60分钟</b>。这能节约大量时间并免去堵车烦恼，但务必注意以下极其重要的实战经验：" data-en="Taking a bush plane from Nairobi's <b>Wilson Airport</b> to the Mara takes only <b>45-60 minutes</b>. It saves immense time and avoids traffic, but please pay close attention to these crucial field tips:">
+                        在内罗毕的 <b>威尔森机场 (Wilson Airport)</b> 乘坐支线小飞机前往马赛马拉，只需要 <b>45—60分钟</b>。这能节约大量时间并免去堵车烦恼，但务必注意以下极其重要的实战经验：
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="mr-2">🧳</span> <span class="i18n" data-zh="1. 严苛的行李限额" data-en="1. Strict Luggage Limits">1. 严苛的行李限额</span></h4>
+                            <p class="text-sm text-mara-text/80 i18n" data-zh="支线飞机只能托运 <b>15公斤以下</b> 的软质行李箱。超重需现场支付昂贵费用（10kg内 $50，21-30kg $135）。<br><i>星巴经验：将大件行李寄存在内罗毕酒店，仅携带必需品飞往马拉。</i>" data-en="Bush planes only allow <b>up to 15kg</b> in soft-sided bags. Excess baggage is expensive (<10kg for $50, 21-30kg for $135).<br><i>Simba's Tip: Store large luggage at your Nairobi hotel and fly with essentials only.</i>">
+                                支线飞机只能托运 <b>15公斤以下</b> 的软质行李箱。超重需现场支付昂贵费用（10kg内 $50，21-30kg $135）。<br><i>星巴经验：将大件行李寄存在内罗毕酒店，仅携带必需品飞往马拉。</i>
+                            </p>
+                        </div>
+                        <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="mr-2">📍</span> <span class="i18n" data-zh="2. 谨防下错机场" data-en="2. Choose & Verify Your Airstrip">2. 谨防下错机场</span></h4>
+                            <p class="text-sm text-mara-text/80 i18n" data-zh="马赛马拉有 <b>12个机场</b> 且相距甚远（如飞错到 Keekorok 再开回 Ol Seki 需要2-3小时）。一架飞机通常会经停多个机场，<b>下机前务必与飞行员反复核对！</b>" data-en="The Mara has <b>12 airstrips</b> spaced far apart (e.g., landing at Keekorok and driving to Ol Seki takes 2-3 hours). One plane often makes multiple stops. <b>Always verify with the pilot before disembarking!</b>">
+                                马赛马拉有 <b>12个机场</b> 且相距甚远（如飞错到 Keekorok 再开回 Ol Seki 需要2-3小时）。一架飞机通常会经停多个机场，<b>下机前务必与飞行员反复核对！</b>
+                            </p>
+                        </div>
+                        <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="mr-2">⏰</span> <span class="i18n" data-zh="3. 优选早班机" data-en="3. Prefer Morning Flights">3. 优选早班机</span></h4>
+                            <p class="text-sm text-mara-text/80 i18n" data-zh="航班通常每天3班（上午2班，下午1班）。尽量预订早班机，若早班因天气取消，还能被调配至下午航班；若下午航班取消，则只能滞留内罗毕。" data-en="Flights run ~3 times daily (2 morning, 1 afternoon). Always book morning flights. If canceled due to weather, you can be moved to the afternoon. If an afternoon flight is canceled, you lose a day.">
+                                航班通常每天3班（上午2班，下午1班）。尽量预订早班机，若早班因天气取消，还能被调配至下午航班；若下午航班取消，则只能滞留内罗毕。
+                            </p>
+                        </div>
+                        <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-mara-text mb-2 flex items-center"><span class="mr-2">🏢</span> <span class="i18n" data-zh="4. 提早抵达与不同航站楼" data-en="4. Arrival Times & Terminals">4. 提早抵达与不同航站楼</span></h4>
+                            <p class="text-sm text-mara-text/80 i18n" data-zh="Wilson 机场没有统一航站楼。两大主流航司 Safarilink 和 Air Kenya 有各自的候机楼。务必考虑内罗毕糟糕的堵车，至少 <b>提前1小时</b> 抵达。" data-en="Wilson Airport has no central terminal. Major carriers Safarilink and Air Kenya have separate buildings. Factor in Nairobi's notorious traffic and arrive <b>at least 1 hour early</b>.">
+                                Wilson 机场没有统一航站楼。两大主流航司 Safarilink 和 Air Kenya 有各自的候机楼。务必考虑内罗毕糟糕的堵车，至少 <b>提前1小时</b> 抵达。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 航班时刻表 -->
+                    <div class="mt-6 border border-mara-sand/50 rounded-xl overflow-hidden">
+                        <div class="bg-mara-sand/20 px-4 py-3 border-b border-mara-sand/50">
+                            <h4 class="font-bold text-mara-text text-sm i18n" data-zh="参考时刻表：内罗毕 Wilson ✈️ 马拉 Ol Seki 机场 (Safarilink)" data-en="Reference Timetable: Nairobi Wilson ✈️ Mara Ol Seki (Safarilink)">参考时刻表：内罗毕 Wilson ✈️ 马拉 Ol Seki 机场 (Safarilink)</h4>
+                            <p class="text-xs text-mara-text/60 mt-1 i18n" data-zh="*基于2024年6月数据，航班时间和票价随季度变动，请以官网为准。" data-en="*Based on June 2024 data. Schedules/prices vary by season. Check official websites.">*基于2024年6月数据，航班时间和票价随季度变动，请以官网为准。</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-mara-text">
+                                <thead class="bg-white border-b border-mara-sand/30 uppercase">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 i18n" data-zh="始发地 (From)" data-en="From">始发地 (From)</th>
+                                        <th scope="col" class="px-6 py-3 i18n" data-zh="目的地 (To)" data-en="To">目的地 (To)</th>
+                                        <th scope="col" class="px-6 py-3 i18n" data-zh="起飞时间" data-en="Departure">起飞时间</th>
+                                        <th scope="col" class="px-6 py-3 i18n" data-zh="抵达时间" data-en="Arrival">抵达时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-mara-sand/20">
+                                    <!-- 去程 -->
+                                    <tr class="bg-white hover:bg-mara-sand/5">
+                                        <td class="px-6 py-3 font-semibold whitespace-nowrap" rowspan="3">Nairobi-Wilson<br><span class="text-xs text-mara-text/60 i18n" data-zh="威尔森机场" data-en="">威尔森机场</span></td>
+                                        <td class="px-6 py-3 font-semibold whitespace-nowrap" rowspan="3">Ol Seki Airstrip<br><span class="text-xs text-mara-text/60 i18n" data-zh="奥尔赛基机场" data-en="">奥尔赛基机场</span></td>
+                                        <td class="px-6 py-3 font-bold text-mara-green">07:15</td>
+                                        <td class="px-6 py-3">08:15</td>
+                                    </tr>
+                                    <tr class="bg-white hover:bg-mara-sand/5">
+                                        <td class="px-6 py-3 font-bold text-mara-green">10:00</td>
+                                        <td class="px-6 py-3">11:00</td>
+                                    </tr>
+                                    <tr class="bg-white hover:bg-mara-sand/5">
+                                        <td class="px-6 py-3 font-bold text-mara-accent">14:15</td>
+                                        <td class="px-6 py-3">15:15</td>
+                                    </tr>
+                                    <!-- 返程 -->
+                                    <tr class="bg-mara-bg/50 hover:bg-mara-sand/10">
+                                        <td class="px-6 py-3 font-semibold whitespace-nowrap" rowspan="3">Ol Seki Airstrip<br><span class="text-xs text-mara-text/60 i18n" data-zh="奥尔赛基机场" data-en="">奥尔赛基机场</span></td>
+                                        <td class="px-6 py-3 font-semibold whitespace-nowrap" rowspan="3">Nairobi-Wilson<br><span class="text-xs text-mara-text/60 i18n" data-zh="威尔森机场" data-en="">威尔森机场</span></td>
+                                        <td class="px-6 py-3 font-bold text-mara-green">08:15</td>
+                                        <td class="px-6 py-3">09:40</td>
+                                    </tr>
+                                    <tr class="bg-mara-bg/50 hover:bg-mara-sand/10">
+                                        <td class="px-6 py-3 font-bold text-mara-green">11:00</td>
+                                        <td class="px-6 py-3">12:20</td>
+                                    </tr>
+                                    <tr class="bg-mara-bg/50 hover:bg-mara-sand/10">
+                                        <td class="px-6 py-3 font-bold text-mara-accent">15:15</td>
+                                        <td class="px-6 py-3">16:15</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 选择住宿点 (新增板块) ================= -->
+        <section id="sec-accommodation" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="住宿指南：如何选择理想的住宿点" data-en="Accommodation Guide: Choosing the Ideal Lodge">住宿指南：如何选择理想的住宿点</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl i18n" data-zh="在马赛马拉寻找和观察野生动物时，选择住宿地点是非常重要的，这决定了你能看到各种野生动物的机率和你在马赛马拉的 Safari 旅行的综合感受。去非洲大部分自然保护区的每日旅行成本（食宿、交通、门票）普遍远高于欧美常规城市旅行，因此做预算的合理规划至关重要。住宿点没有最好的，只有比较好的，总是基于自己的预算来确定的。1、体验感好的酒店总是符合“贵有贵的道理”这一原则；2、体验感好的酒店总是需要提前半年和一年就要预定房间。3、淡旺季的区别很大。" data-en="When seeking wildlife in the Mara, your choice of accommodation is critical. It determines the probability of sightings and the overall quality of your Safari experience. Daily travel costs in most African reserves (lodging, transport, park fees) are generally much higher than typical city travel in the US/EU, making budget planning essential. There is no 'best' lodge, only 'better' ones, and choices are always determined by your budget. 1. Lodges with great experiences always follow the rule 'you get what you pay for'; 2. These highly-rated lodges usually require booking six months to a year in advance; 3. There is a huge difference between high and low seasons.">
+                    在马赛马拉寻找和观察野生动物时，选择住宿地点是非常重要的，这决定了你能看到各种野生动物的机率和你在马赛马拉的 Safari 旅行的综合感受。去非洲大部分自然保护区的每日旅行成本（食宿、交通、门票）普遍远高于欧美常规城市旅行，因此做预算的合理规划至关重要。住宿点没有最好的，只有比较好的，总是基于自己的预算来确定的。1、体验感好的酒店总是符合“贵有贵的道理”这一原则；2、体验感好的酒店总是需要提前半年和一年就要预定房间。3、淡旺季的区别很大。
+                </p>
+            </div>
+
+            <!-- 关键要素 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="理想住宿点的关键要素" data-en="Key Elements of an Ideal Lodge">理想住宿点的关键要素</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">🌳</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="1. 周边环境" data-en="1. Surroundings">1. 周边环境</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="必须有纯野外的自然环境。靠近河流和森林方便寻找狮子、花豹；建在山丘上的营地视野极佳，有助于远距离定位动物。" data-en="Must offer a pure wilderness environment. Proximity to rivers and forests helps in finding lions and leopards. Camps on hills provide excellent vantage points for spotting animals from afar.">必须有纯野外的自然环境。靠近河流和森林方便寻找狮子、花豹；建在山丘上的营地视野极佳，有助于远距离定位动物。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">🗺️</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="2. 交通便利性" data-en="2. Accessibility">2. 交通便利性</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="保护区内部、靠近入口、或者在机场附近（但不过分靠近）的住宿，能大大减少每天花在枯燥赶路上的时间，轻松规划游猎。" data-en="Lodges inside the reserve, near entry gates, or near airstrips (but not too close) significantly reduce dull transit time, making game drive planning effortless.">保护区内部、靠近入口、或者在机场附近（但不过分靠近）的住宿，能大大减少每天花在枯燥赶路上的时间，轻松规划游猎。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">🛏️</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="3. 酒店设施" data-en="3. Facilities">3. 酒店设施</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="包括餐饮质量、住宿舒适性、房间清洁度，以及是否提供完善的附属设施（如游泳池、观景台等）以供中午休息。" data-en="Includes food quality, comfort, cleanliness, and the availability of amenities like swimming pools and viewing decks for midday relaxation.">包括餐饮质量、住宿舒适性、房间清洁度，以及是否提供完善的附属设施（如游泳池、观景台等）以供中午休息。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">🤝</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="4. 服务水平" data-en="4. Service Level">4. 服务水平</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="不仅限于营地员工的专业态度，更核心的是其配备的<b>野外向导（Guide）的经验水平</b>，这直接决定了你每天能看到什么。" data-en="Not limited to camp staff professionalism, but crucially, the <b>experience level of their Safari Guides</b>, which directly determines what wildlife you will see.">不仅限于营地员工的专业态度，更核心的是其配备的<b>野外向导（Guide）的经验水平</b>，这直接决定了你每天能看到什么。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">💰</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="5. 性价比" data-en="5. Value for Money">5. 性价比</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="在非洲，通常贵有贵的道理。考虑到高昂的物流和野外维护成本，价格<b>低于150美元/人/天</b>的住宿必须慎重选择。" data-en="In Africa, you generally get what you pay for. Considering high logistics and maintenance costs, lodges priced <b>below $150/person/day</b> should be approached with extreme caution.">在非洲，通常贵有贵的道理。考虑到高昂的物流和野外维护成本，价格<b>低于150美元/人/天</b>的住宿必须慎重选择。</p>
+                    </div>
+                    <!-- 新增：支持社区与保护事业 -->
+                    <div class="bg-white p-6 rounded-xl border border-mara-sand/30 shadow-sm hover:shadow-md transition">
+                        <div class="text-3xl mb-3">💚</div>
+                        <h4 class="font-bold text-lg mb-2 text-mara-text i18n" data-zh="6. 支持社区与保护" data-en="6. Conservation Support">6. 支持社区与保护</h4>
+                        <p class="text-sm text-mara-text/80 i18n" data-zh="优先选择与马赛社区、保护区巡护、反盗猎、生态教育或栖息地保护有关联的营地。一次住宿不仅是旅行消费，也可以成为对马赛马拉长期保护的实际支持。" data-en="Prioritize camps associated with the Maasai community, ranger patrols, anti-poaching, ecological education, or habitat protection. Your stay isn't just travel spending; it becomes actual support for the long-term conservation of the Maasai Mara.">优先选择与马赛社区、保护区巡护、反盗猎、生态教育或栖息地保护有关联的营地。一次住宿不仅是旅行消费，也可以成为对马赛马拉长期保护的实际支持。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心对比矩阵表 -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="三大类住宿模式硬核对比 (以旺季为例)" data-en="Core Comparison of Accommodation Types (Peak Season)">三大类住宿模式硬核对比 (以旺季为例)</h3>
+                <div class="bg-white rounded-2xl shadow-md border-t-8 border-mara-green overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-mara-bg text-mara-text border-b border-mara-sand/50 text-base">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4 font-bold i18n" data-zh="评估维度" data-en="Metrics">评估维度</th>
+                                    <th scope="col" class="px-6 py-4 font-bold border-l border-white i18n" data-zh="国家保护区内的酒店" data-en="Inside National Reserve">国家保护区内的酒店</th>
+                                    <th scope="col" class="px-6 py-4 font-bold border-l border-white i18n" data-zh="国家保护区外的酒店" data-en="Outside National Reserve">国家保护区外的酒店</th>
+                                    <th scope="col" class="px-6 py-4 font-bold border-l border-white bg-mara-green/10 i18n" data-zh="私人保护区内的酒店" data-en="Inside Private Conservancy">私人保护区内的酒店</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-mara-sand/30">
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="保护区门票<br><span class='text-xs font-normal'>(每人每天)</span>" data-en="Park Fees<br><span class='text-xs font-normal'>(Per person/day)</span>">保护区门票<br><span class="text-xs font-normal">(每人每天)</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 text-mara-accent font-bold">200美元</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 text-mara-accent font-bold">200美元</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 i18n" data-zh="100美元<br><span class='text-xs text-mara-text/70'>(通常已包含在房费内)</span>" data-en="$100<br><span class='text-xs text-mara-text/70'>(Usually included in room rate)</span>">100美元<br><span class="text-xs text-mara-text/70">(通常已包含在房费内)</span></td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="寻找动物的区域" data-en="Game Drive Areas">寻找动物的区域</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="限于国家保护区。<br><b>不能去私人保护区。</b>" data-en="Limited to National Reserve.<br><b>Cannot enter private conservancies.</b>">限于国家保护区。<br><b>不能去私人保护区。</b></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="限于国家保护区。<br><b>不能去私人保护区。</b>" data-en="Limited to National Reserve.<br><b>Cannot enter private conservancies.</b>">限于国家保护区。<br><b>不能去私人保护区。</b></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 i18n" data-zh="专属私人保护区。<br><b>也可去国家保护区</b> (需另付200美元门票)。" data-en="Exclusive Private Conservancy.<br><b>Can also enter National Reserve</b> (requires extra $200 fee).">专属私人保护区。<br><b>也可去国家保护区</b> (需另付200美元门票)。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="车辆安排" data-en="Vehicle Arrangements">车辆安排</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="通常由旅行社安排。若乘飞机抵达，酒店也有自有车辆接送和游猎。" data-en="Usually arranged by travel agents. If arriving by air, lodges provide own vehicles for drives.">通常由旅行社安排。若乘飞机抵达，酒店也有自有车辆接送和游猎。</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="通常是旅行社安排的车辆，从内罗毕到马赛马拉一路开过来。" data-en="Usually travel agent vehicles driven all the way from Nairobi.">通常是旅行社安排的车辆，从内罗毕到马赛马拉一路开过来。</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 i18n" data-zh="酒店直接安排专业敞篷游猎车，费用一般包含在房费内。" data-en="Lodge provides specialized open-sided safari vehicles, included in room rate.">酒店直接安排专业敞篷游猎车，费用一般包含在房费内。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="参观时间" data-en="Operating Hours">参观时间</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20">早上 6:00 － 晚上 6:00</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20">早上 6:00 － 晚上 6:00</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 i18n" data-zh="<b>通常无时间限制。</b><br>晚上可出猎 (Night Drive)，但需额外支付向导小费。" data-en="<b>Usually no time limits.</b><br>Night drives permitted (requires tip for guide)."><b>通常无时间限制。</b><br>晚上可出猎 (Night Drive)，但需额外支付向导小费。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="酒店价格<br><span class='text-xs font-normal'>(每人每天)</span>" data-en="Lodge Price<br><span class='text-xs font-normal'>(Per person/day)</span>">酒店价格<br><span class="text-xs font-normal">(每人每天)</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="<b>高</b> (400美元左右)" data-en="<b>High</b> (~$400)"><b>高</b> (400美元左右)</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="<b>中等</b> (200-300美元)<br><span class='text-xs'>个别也有极高价</span>" data-en="<b>Medium</b> ($200-300)<br><span class='text-xs'>A few high-end exceptions</span>"><b>中等</b> (200-300美元)<br><span class="text-xs">个别也有极高价</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 font-bold text-mara-text i18n" data-zh="很高 (600美元以上)" data-en="Very High ($600+)">很高 (600美元以上)</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="野生动物可见率" data-en="Wildlife Visibility">野生动物可见率</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-bold text-mara-green i18n" data-zh="高" data-en="High">高</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-bold text-mara-accent i18n" data-zh="低" data-en="Low">低</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 font-bold text-mara-green i18n" data-zh="高" data-en="High">高</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5 border-b-4 border-mara-sand/50">
+                                    <td class="px-6 py-4 font-bold text-mara-text i18n" data-zh="观察野生动物的私密性" data-en="Sighting Privacy">观察野生动物的私密性</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-bold text-mara-accent i18n" data-zh="低 (拥挤)" data-en="Low (Crowded)">低 (拥挤)</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-bold text-mara-accent i18n" data-zh="低" data-en="Low">低</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 bg-mara-green/5 font-bold text-mara-green i18n" data-zh="高 (极佳)" data-en="High (Exclusive)">高 (极佳)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 星巴的野外私房话 -->
+            <div class="relative bg-[#4A3728] text-white p-8 md:p-10 rounded-2xl shadow-lg overflow-hidden mt-12">
+                <!-- 装饰性元素 -->
+                <div class="absolute top-0 right-0 opacity-10 text-[150px] leading-none transform translate-x-10 -translate-y-10">🤠</div>
+                
+                <h3 class="text-2xl font-serif font-bold mb-6 flex items-center i18n" data-zh="<span class='bg-mara-accent/80 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3'>🎙️</span> 星巴的野外住宿经验" data-en="<span class='bg-mara-accent/80 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3'>🎙️</span> Simba's Accommodation Tips">
+                    <span class="bg-mara-accent/80 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3">🎙️</span> 星巴的野外住宿经验
+                </h3>
+                
+                <div class="space-y-4 text-white/90 leading-relaxed font-light text-lg relative z-10">
+                    <p class="i18n" data-zh="“我在马赛马拉生活这些年，探访过无数酒店，我个人最看重的是<b>地理条件</b>。”" data-en='"Having lived in the Mara for years and visited countless lodges, I personally prioritize <b>geographical location</b> above all else."'>“我在马赛马拉生活这些年，探访过无数酒店，我个人最看重的是<b>地理条件</b>。”</p>
+                    
+                    <div class="pl-4 border-l-2 border-mara-sand/50 space-y-3">
+                        <p class="i18n" data-zh="最好是靠河流，如马拉河、塔莱克河、奥拉尔俄洛克河等，周围有浓密的森林和灌木丛，既可以遮阴，也方便就近观察狮子和花豹。" data-en="Ideally, it should be next to a river like the Mara, Talek, or Olare Orok, surrounded by dense forests and thickets for shade and easy spotting of lions and leopards nearby.">最好是靠河流，如马拉河、塔莱克河、奥拉尔俄洛克河等，周围有浓密的森林和灌木丛，既可以遮阴，也方便就近观察狮子和花豹。</p>
+                        <p class="i18n" data-zh="当然靠河流也有隐患：离河马太近很危险（可能攻击人），且有浓烈气味；森林容易吸引大象来访，可能对营地造成破坏。" data-en="Of course, riverfronts have risks: staying too close to hippos is dangerous (they can attack) and smelly; forests also attract visiting elephants, which can cause structural damage.">当然靠河流也有隐患：离河马太近很危险（可能攻击人），且有浓烈气味；森林容易吸引大象来访，可能对营地造成破坏。</p>
+                        <p class="i18n" data-zh="另外，我也喜欢<b>地势较高</b>的酒店，可以看得很远。有点狮子王站在岩石上远眺非洲大草原的感觉！在高地用望远镜可以远距离提前发现你想找的动物。" data-en="I also love lodges on <b>higher ground</b> with expansive views. It feels like the Lion King standing on Pride Rock overlooking the savanna! You can use binoculars to spot animals from miles away.">另外，我也喜欢<b>地势较高</b>的酒店，可以看得很远。有点狮子王站在岩石上远眺非洲大草原的感觉！在高地用望远镜可以远距离提前发现你想找的动物。</p>
+                    </div>
+                    
+                    <p class="italic text-mara-sand mt-4 i18n" data-zh="“我本人习惯住在自己的帐篷里，所以对酒店设施餐饮要求不高，但能住在软硬件极佳的野奢酒店，确实也是一种顶级的享受。”" data-en='"I am used to living in my own tent, so I don’t demand much regarding facilities or food. However, staying in a luxury eco-lodge with top-tier hardware and software is undeniably an ultimate treat."'>“我本人习惯住在自己的帐篷里，所以对酒店设施餐饮要求不高，但能住在软硬件极佳的野奢酒店，确实也是一种顶级的享受。”</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= 星巴专属底部名片区 ================= -->
+    <footer class="bg-mara-green text-white mt-12 py-10 border-t-8 border-mara-accent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex flex-col">
+                    <h3 class="text-xl md:text-2xl font-serif mb-4 flex items-center font-bold">
+                        <span class="text-mara-sand mr-2">●</span> <span class="i18n" data-zh="发布机构" data-en="Published By">发布机构</span>
+                    </h3>
+                    <div class="bg-white/5 border border-white/10 p-5 rounded-xl hover:bg-white/10 transition-colors">
+                        <p class="text-xl font-bold tracking-wider text-mara-sand i18n" data-zh="马拉野保学院" data-en="Mara Natural History Center">马拉野保学院</p>
+                        <p class="text-sm mt-1 text-white/60 font-serif">Mara Natural History Center (MNHC)</p>
+                        <p class="text-sm mt-4 leading-relaxed text-white/90 i18n" data-zh="致力于在非洲马赛马拉一线开展野生动物行为研究与保护行动，连接全球华人力量，共筑生命共同体。" data-en="Dedicated to frontline wildlife behavior research and conservation in the Maasai Mara, connecting global Chinese strength to build a community of life.">致力于在非洲马赛马拉一线开展野生动物行为研究与保护行动，连接全球华人力量，共筑生命共同体。</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <h3 class="text-xl md:text-2xl font-serif mb-4 flex items-center font-bold">
+                        <span class="text-mara-accent mr-2">●</span> <span class="i18n" data-zh="创始人" data-en="Founder">创始人</span>
+                    </h3>
+                    <div class="flex gap-4 items-start bg-white/5 border border-white/10 p-5 rounded-xl">
+                        <div class="w-16 h-16 rounded-full bg-mara-sand flex-shrink-0 border-[3px] border-mara-accent flex items-center justify-center overflow-hidden shadow-lg">
+                            <span class="text-3xl leading-none">🤠</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-lg text-mara-sand i18n" data-zh="星巴 <span class='text-sm font-normal text-white/70 ml-1'>Simba Qiang Zhuo</span>" data-en="Simba Qiang Zhuo">星巴 <span class="text-sm font-normal text-white/70 ml-1">Simba Qiang Zhuo</span></p>
+                            <p class="text-xs text-white/80 mt-2 mb-2 leading-relaxed bg-black/20 p-2 rounded border-l-2 border-mara-accent">
+                                <span class="i18n" data-zh="扎根肯尼亚的中国野保探险家。" data-en="Chinese wildlife conservation explorer based in Kenya.">扎根肯尼亚的中国野保探险家。</span><br>
+                                <span class="italic i18n" data-zh="“一顶 safari 牛仔帽，一身绿色户外服，披着红色马赛披风。”" data-en='"A safari cowboy hat, green outdoor gear, and a red Maasai blanket."'>“一顶 safari 牛仔帽，一身绿色户外服，披着红色马赛披风。”</span>
+                            </p>
+                            <p class="text-sm text-white/90 leading-relaxed mt-2 i18n" data-zh="数十载与狮群为伴。致力于研究野生动物行为，化解人兽冲突，保护并恢复野生动物栖息地，推动中非野保合作。" data-en="Decades spent with lions. Dedicated to wildlife behavior research, human-wildlife conflict mitigation, habitat restoration, and promoting Sino-African conservation cooperation.">数十载与狮群为伴。致力于研究野生动物行为，化解人兽冲突，保护并恢复野生动物栖息地，推动中非野保合作。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <h3 class="text-xl md:text-2xl font-serif mb-4 flex items-center font-bold">
+                        <span class="text-mara-sand mr-2">●</span> <span class="i18n" data-zh="关注我们" data-en="Follow Us">关注我们</span>
+                    </h3>
+                    <div class="flex flex-col space-y-3">
+                        <a href="#" class="flex items-center bg-white/5 hover:bg-white/15 transition p-4 rounded-xl border border-white/10 group">
+                            <span class="text-mara-accent font-bold text-xl mr-4 bg-white w-10 h-10 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform shadow-md">小</span>
+                            <div>
+                                <p class="font-bold text-white group-hover:text-mara-sand transition-colors i18n" data-zh="小红书" data-en="Xiaohongshu">小红书</p>
+                                <p class="text-sm text-white/60 i18n" data-zh="@星巴野保日记" data-en="@Simba_Wildlife_Diary">@星巴野保日记</p>
+                            </div>
+                        </a>
+                        <a href="#" class="flex items-center bg-white/5 hover:bg-white/15 transition p-4 rounded-xl border border-white/10 group">
+                            <span class="text-[#07C160] font-bold text-xl mr-4 bg-white w-10 h-10 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform shadow-md">V</span>
+                            <div>
+                                <p class="font-bold text-white group-hover:text-mara-sand transition-colors i18n" data-zh="微信视频号" data-en="WeChat Channels">微信视频号</p>
+                                <p class="text-sm text-white/60 i18n" data-zh="@星巴野保探险家" data-en="@Simba_Explorer">@星巴野保探险家</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/20 mt-10 pt-6 text-center text-sm text-white/50 font-serif">
+                &copy; 2026 <span class="i18n" data-zh="马拉野保学院" data-en="Mara Natural History Center">马拉野保学院</span> (Mara Natural History Center). <br class="sm:hidden">
+                <span class="i18n" data-zh="保护野生动物，就是保护人类自己。" data-en="Protecting wildlife is protecting humanity itself.">保护野生动物，就是保护人类自己。</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= JavaScript 逻辑 ================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            window.currentLang = 'zh'; 
+            
+            function applyTranslations() {
+                document.querySelectorAll('.i18n').forEach(el => {
+                    el.innerHTML = el.getAttribute(`data-${window.currentLang}`);
+                });
+                
+                if(document.getElementById('sec-migration').classList.contains('active')) renderMigrationChart();
+                
+                const activeCBtn = document.querySelector('.conservancy-btn.active');
+                if(activeCBtn) {
+                    renderConservancyGrid(); 
+                    const newActiveCBtn = document.querySelector(`.conservancy-btn[data-key="${activeCBtn.dataset.key}"]`);
+                    if(newActiveCBtn) newActiveCBtn.click();
+                }
+
+                const activeWBtn = document.querySelector('.wildlife-btn.active');
+                if(activeWBtn) {
+                    renderWildlifeGrid(); 
+                    const newActiveWBtn = document.querySelector(`.wildlife-btn[data-key="${activeWBtn.dataset.key}"]`);
+                    if(newActiveWBtn) newActiveWBtn.click();
+                }
+            }
+
+            document.getElementById('langToggle').addEventListener('click', function() {
+                window.currentLang = window.currentLang === 'zh' ? 'en' : 'zh';
+                if(window.currentLang === 'en') {
+                    this.innerHTML = '<span class="mr-1 text-xs">EN</span> / <span class="ml-1">中文</span>';
+                } else {
+                    this.innerHTML = '<span class="mr-1">EN</span> / <span class="ml-1 text-xs">中文</span>';
+                }
+                applyTranslations();
+            });
+
+            // ================= OpenStreetMap 初始化逻辑 =================
+            let maraMap = null;
+            function initMap() {
+                if (maraMap !== null) return; 
+                maraMap = L.map('mara-map').setView([-1.4050, 35.0000], 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(maraMap);
+
+                L.marker([-1.5, 35.0]).addTo(maraMap)
+                    .bindPopup('<b class="text-mara-text text-sm">马赛马拉国家保护区</b><br><span class="text-xs text-gray-500">Maasai Mara National Reserve</span>');
+            }
+            
+            initMap();
+            setTimeout(() => { if (maraMap) maraMap.invalidateSize(); }, 500);
+
+            // ================= 核心双语野生动物数据 =================
+            const allWildlife = {
+                'w-lion': {
+                    icon: '🦁',
+                    zh: {
+                        name: '非洲狮 (African Lion)', tagline: 'Panthera leo · 草原之王与复杂的社会网络',
+                        behavior: '狮子是唯一的群居猫科动物。星巴（Simba）在野外数十载的观察表明，马赛马拉的狮群有着极高的领地重合度。雄狮负责极其激烈的领地保卫战，母狮则通过高度协同合作来猎杀猎物并共同抚育幼崽。',
+                        ecology: '绝对的顶级掠食者（Apex Predator），控制着角马、斑马等中大型食草动物的数量，淘汰老弱病残，对维持马赛马拉草原生态平衡起着决定性作用。',
+                        threats: '<b>最严峻的威胁来自人兽冲突（HWC）。</b>当狮子捕杀家畜时，往往招致村民使用毒药或长矛报复。此外，放牧区域扩张导致的“栖息地碎片化”正逐渐压缩狮群生存空间。'
+                    },
+                    en: {
+                        name: 'African Lion', tagline: 'Panthera leo · Savannah Kings and Complex Social Networks',
+                        behavior: 'Lions are the only social felines. Simba\'s field observations reveal high territorial overlap among Mara prides. Males fight intense territorial battles, while females cooperate highly in hunting and raising cubs.',
+                        ecology: 'Absolute apex predators, controlling populations of herbivores like wildebeest and zebras, weeding out the weak, playing a decisive role in the Mara\'s ecological balance.',
+                        threats: '<b>The most severe threat is Human-Wildlife Conflict (HWC).</b> Preying on livestock often triggers retaliatory killings. Habitat fragmentation from expanding grazing areas is shrinking their territories.'
+                    }
+                },
+                'w-leopard': {
+                    icon: '🐆',
+                    zh: {
+                        name: '花豹 (Leopard)', tagline: 'Panthera pardus · 隐秘的夜行性树冠刺客',
+                        behavior: '极具隐蔽性的独居猫科动物。星巴（Simba）在野外观察中发现，花豹力量惊人，能将比自己重两倍的猎物（如黑斑羚）垂直拖上十几米高的树冠，以防被狮子和鬣狗抢夺。它们高度依赖河谷林地和灌木丛进行潜行。',
+                        ecology: '关键的中坚掠食者（Mesopredator）。主要控制林地边缘的中小型羚羊（如黑斑羚、林羚）以及狒狒的数量，维系着林地生态系统的健康。',
+                        threats: '最大的威胁来自栖息地丧失。马赛马拉周边的河谷林地常被非法砍伐用于烧炭或扩张农田，直接剥夺了花豹赖以生存的藏身和捕猎之所。'
+                    },
+                    en: {
+                        name: 'Leopard', tagline: 'Panthera pardus · Stealthy nocturnal canopy assassins',
+                        behavior: 'Highly elusive and solitary felines. Simba\'s field observations show leopards possess incredible strength, capable of hoisting prey twice their weight vertically into trees to avoid kleptoparasitism. They rely heavily on woodlands for camouflage.',
+                        ecology: 'Key mesopredators. They primarily control populations of small-to-medium antelopes and baboons along woodland edges, maintaining forest ecosystem health.',
+                        threats: 'The greatest threat is habitat loss. Riverine woodlands are often illegally logged for charcoal or agriculture, stripping leopards of their crucial hiding grounds.'
+                    }
+                },
+                'w-cheetah': {
+                    icon: '🐆',
+                    zh: {
+                        name: '猎豹 (Cheetah)', tagline: 'Acinonyx jubatus · 极度脆弱的草原极速者',
+                        behavior: '陆地上奔跑最快的动物（时速达110km/h）。猎豹在白天依靠视觉在短草平原上高速追逐。由于骨骼结构为速度妥协，它们力量孱弱，捕猎后极易被抢食。雄性常结成“兄弟联盟”。',
+                        ecology: '短草平原上的顶级速度猎手，主要控制汤氏瞪羚等小型敏捷食草动物的种群数量。',
+                        threats: '<b>极易受到旅游车辆围堵和过度靠近的干扰。</b>由于白天捕猎，过多游客严重影响了其捕猎成功率和幼崽存活率。面对狮子和鬣狗处于绝对劣势。'
+                    },
+                    en: {
+                        name: 'Cheetah', tagline: 'Acinonyx jubatus · Highly vulnerable savannah speedsters',
+                        behavior: 'The fastest land animal. Cheetahs are diurnal, hunting by sight on short-grass plains. Because their anatomy compromises strength for speed, kills are easily stolen. Males often form "brotherhood coalitions".',
+                        ecology: 'Apex speed hunters on the short-grass plains, primarily controlling populations of small, agile herbivores like Thomson\'s gazelles.',
+                        threats: '<b>Highly vulnerable to harassment by crowding tourist vehicles.</b> Being diurnal hunters, excessive traffic severely impacts hunting success and cub survival. At an absolute disadvantage against lions and hyenas.'
+                    }
+                },
+                'w-elephant': {
+                    icon: '🐘',
+                    zh: {
+                        name: '非洲象 (African Elephant)', tagline: 'Loxodonta africana · 智慧的生态工程师',
+                        behavior: '拥有惊人记忆力和复杂的母系社会。依靠次声波远距离交流。象群由最年长的母象（女族长）带领，她掌握着寻找水源和食物的生存地图。',
+                        ecology: '真正的“生态工程师”。推倒树木为草原开垦空间，防止森林过度蔓延；同时粪便能将植物种子散播到数十公里外。',
+                        threats: '除了象牙盗猎，<b>人象冲突（HEC）是最棘手的挑战</b>。随着农业用地扩张，大象传统迁徙通道被阻断，误入农田常遭到驱赶或枪击。'
+                    },
+                    en: {
+                        name: 'African Elephant', tagline: 'Loxodonta africana · Intelligent Ecological Engineers',
+                        behavior: 'Possess incredible memory and a complex matriarchal society, communicating via infrasound. Led by the oldest female (matriarch), who holds the mental map for survival.',
+                        ecology: 'True "ecological engineers." By knocking down trees, they open space for the savannah, preventing forest overgrowth. Dung disperses seeds miles away.',
+                        threats: 'Besides ivory poaching, <b>Human-Elephant Conflict (HEC) is the most daunting challenge</b>. Expanding agriculture blocks corridors, causing crop-raiding and retaliation.'
+                    }
+                },
+                'w-rhino': {
+                    icon: '🦏',
+                    zh: {
+                        name: '黑犀牛 (Black Rhino)', tagline: 'Diceros bicornis · 极度濒危的远古生灵',
+                        behavior: '生性孤僻、脾气暴躁且领地意识极强。视力较差，但嗅觉听觉敏锐。上唇呈尖状（钩唇），特别适合啃食灌木的枝叶。',
+                        ecology: '作为大型食叶动物（Browser），黑犀牛是修剪灌木植被的“园丁”，为其他小体型食草动物创造生存空间。',
+                        threats: '因犀角在黑市的莫须有药用价值，曾遭受毁灭性盗猎，属<b>极度濒危（CR）</b>物种。在马赛马拉受到全天候持枪保护。'
+                    },
+                    en: {
+                        name: 'Black Rhino', tagline: 'Diceros bicornis · Critically Endangered Ancient Creatures',
+                        behavior: 'Solitary, territorial, and prone to charging. Poor eyesight but acute smell/hearing. Their prehensile (hooked) upper lip is adapted for browsing bushes.',
+                        ecology: 'Mega-herbivore browsers, acting as "gardeners" that prune bush vegetation, opening micro-habitats for smaller herbivores.',
+                        threats: 'Devastated by poaching for baseless medicinal horn value, now <b>Critically Endangered (CR)</b>. Protected by 24/7 armed patrols in the Mara.'
+                    }
+                },
+                'w-buffalo': {
+                    icon: '🐃',
+                    zh: {
+                        name: '非洲水牛 (African Buffalo)', tagline: 'Syncerus caffer · 脾气暴躁的“黑帮老大”',
+                        behavior: '高度群居，常形成庞大牛群。极其团结，面对狮群攻击会结阵反击甚至主动追击。被逐出牛群的老年单身公牛（"Dagga boys"）脾气最差，极其危险。',
+                        ecology: '非选择性大型食草动物，像推土机一样大量啃食粗高草，从而“修剪”出新鲜短草，为斑马、瞪羚等开辟觅食空间。',
+                        threats: '对家畜传播的疾病敏感。旱季时，与马赛家牛争夺水草资源的竞争尤为激烈。'
+                    },
+                    en: {
+                        name: 'African Buffalo', tagline: 'Syncerus caffer · The temperamental "mob boss"',
+                        behavior: 'Highly gregarious, forming massive herds. Fiercely united, often forming a defensive phalanx against lions. Ousted older males ("Dagga boys") are the most dangerous.',
+                        ecology: 'Non-selective bulk grazers, acting like bulldozers consuming coarse tall grass, exposing fresh short shoots for selective grazers like zebras.',
+                        threats: 'Susceptible to livestock-borne diseases. During droughts, competition with Maasai cattle for resources becomes intensely fierce.'
+                    }
+                },
+                'w-giraffe': {
+                    icon: '🦒',
+                    zh: {
+                        name: '马赛长颈鹿 (Maasai Giraffe)', tagline: 'Giraffa tippelskirchi · 优雅的林冠采食者',
+                        behavior: '拥有边缘呈锯齿状的暗褐色斑纹。成年雄性会通过激烈的“脖子交锋（Necking）”争夺交配权。体型庞大，需长时间进食，睡眠极短。',
+                        ecology: '依靠身高优势，专门采食相思树等高层林冠树叶。避免了底层竞争，并塑造了典型的“伞状”树冠稀树草原景观。',
+                        threats: '面临“无声的灭绝”。由于栖息地丧失（林地被砍伐）和丛林肉偷猎，已被IUCN正式列为<b>濒危（EN）</b>物种。'
+                    },
+                    en: {
+                        name: 'Maasai Giraffe', tagline: 'Giraffa tippelskirchi · Elegant canopy browsers',
+                        behavior: 'Distinctive jagged-edged, dark patches. Adult males engage in violent "necking" combat. Due to their size, they spend most of the day feeding and sleep very little.',
+                        ecology: 'Exclusively browse high canopy leaves like acacia, avoiding ground-level competition and shaping the classic "umbrella-canopy" landscape.',
+                        threats: 'Facing a "silent extinction." Due to habitat loss (woodland clearance) and bushmeat poaching, listed as <b>Endangered (EN)</b>.'
+                    }
+                },
+                'w-hippo': {
+                    icon: '🦛',
+                    zh: {
+                        name: '河马 (Hippopotamus)', tagline: 'Hippopotamus amphibius · 夜间除草机',
+                        behavior: '白天泡在河中降温并保护敏感皮肤。雄性领地意识强，张开血盆大口是经典威慑动作。夜间会上岸跋涉数公里啃食短草。',
+                        ecology: '维系水陆物质循环的关键。夜间在陆地进食，白天在水中排泄，粪便为河流生态系统提供大量营养，养育鱼类和水鸟。',
+                        threats: '气候干旱导致河流干涸，生存空间缩小。夜间上岸进入农田觅食经常引发致命的人兽冲突。'
+                    },
+                    en: {
+                        name: 'Hippopotamus', tagline: 'Hippopotamus amphibius · Nocturnal lawnmowers',
+                        behavior: 'Spends days submerged to cool off. Males are highly territorial; yawning to display tusks is a classic threat. Treks kilometers inland at night to graze.',
+                        ecology: 'Crucial for nutrient cycling. Feeds on land at night, defecates in water by day, providing massive nutrients to the river ecosystem.',
+                        threats: 'Droughts dry up rivers, shrinking habitat. Nocturnal inland foraging often brings them into farms, triggering deadly conflicts.'
+                    }
+                },
+                'w-eland': {
+                    icon: '🦌',
+                    zh: {
+                        name: '大羚羊 (Common Eland)', tagline: 'Taurotragus oryx · 体型最大的羚羊',
+                        behavior: '尽管雄性重达近一吨，但异常机警敏捷，受惊时能轻松跃过2米高的灌木丛。成年雄性喉部有明显的垂肉（Dewlap）和螺旋状粗壮牛角。',
+                        ecology: '适应性极强的混合采食者。不需要频繁饮水，能从多汁的植物中获取水分。',
+                        threats: '因体型庞大且肉质较好，常成为非法丛林肉（Bushmeat）盗猎的首选目标；同时面临栖息地丧失。'
+                    },
+                    en: {
+                        name: 'Common Eland', tagline: 'Taurotragus oryx · The largest antelope',
+                        behavior: 'Despite weighing nearly a ton, they are highly alert and agile, capable of jumping over 2m high bushes. Males feature a prominent dewlap on the throat and thick, spiral horns.',
+                        ecology: 'Highly adaptable mixed feeders. They do not need to drink frequently, obtaining moisture from succulent plants.',
+                        threats: 'Due to their large size, they are frequent primary targets for illegal bushmeat poaching, alongside habitat loss.'
+                    }
+                },
+                'w-impala': {
+                    icon: '🦌',
+                    zh: {
+                        name: '黑斑羚 (Impala)', tagline: 'Aepyceros melampus · 最优雅的跳跃者',
+                        behavior: '马赛马拉最常见的羚羊。极具社会性，常结成庞大后宫群。受惊时能连续进行惊人的跳跃，高度可达3米，跨度超10米。',
+                        ecology: '“边缘地带”的大师。既吃草也吃灌木叶，常活动于林地与开阔草原交界处，是花豹和野狗的主要猎物。',
+                        threats: '生存能力强，但林地边缘被人类开垦和过度放牧会直接挤压它们的生活空间。'
+                    },
+                    en: {
+                        name: 'Impala', tagline: 'Aepyceros melampus · The most elegant jumpers',
+                        behavior: 'The most common antelope here. Highly social, forming large harem herds. When alarmed, they execute incredible consecutive leaps up to 3m high and 10m long.',
+                        ecology: 'Masters of the "edge" habitat. They both graze and browse, often found at the woodland-savannah ecotone. Primary prey for leopards and wild dogs.',
+                        threats: 'Resilient, but woodland edge clearing and overgrazing directly compress their living space.'
+                    }
+                },
+                'w-hartebeest': {
+                    icon: '🦌',
+                    zh: {
+                        name: '狷羚 (Hartebeest)', tagline: 'Alcelaphus buselaphus · 长脸高肩的奇特哨兵',
+                        behavior: '外形奇特，长脸、高肩和向下倾斜的背部。常与角马、斑马混群，凭借极佳视力充当混合群体的“哨兵”。',
+                        ecology: '偏好中等高度的草，是典型的高效食草动物，在维持草原植被高度梯度的生态接力中发挥重要作用。',
+                        threats: '与其他大型食草动物一样，主要威胁是栖息地丧失以及与马赛人的家牛竞争优质草场。'
+                    },
+                    en: {
+                        name: 'Hartebeest', tagline: 'Alcelaphus buselaphus · Strange sentinels with long faces',
+                        behavior: 'Peculiar appearance with a long face, high shoulders, and sloping back. Often mixes with wildebeest/zebras, acting as excellent visual "sentinels".',
+                        ecology: 'Prefers medium-height grass. Efficient grazers playing a crucial role in the ecological succession of savannah vegetation height.',
+                        threats: 'Primarily threatened by habitat loss and competing with Maasai cattle for prime pasture.'
+                    }
+                },
+                'w-grants': {
+                    icon: '🦌',
+                    zh: {
+                        name: '葛氏瞪羚 (Grant\'s Gazelle)', tagline: 'Nanger granti · 耐旱的白尾平原客',
+                        behavior: '体型比汤氏瞪羚大。最可靠区分特征是尾根部至臀部有<b>延伸至背部上方</b>的白色斑块。耐旱能力极强，极少直接饮水。',
+                        ecology: '广泛分布于较为干旱的开阔平原，主要通过食用灌木叶子获取水分。是猎豹等中型掠食者的重要猎物。',
+                        threats: '随着气候干旱加剧，它们在稀树草原上与马赛人散养的绵羊和山羊的资源竞争日益激烈。'
+                    },
+                    en: {
+                        name: 'Grant\'s Gazelle', tagline: 'Nanger granti · Drought-resistant white-tailed grazers',
+                        behavior: 'Noticeably larger than Thomson\'s. Reliable ID feature is a white patch at the tail base that <b>extends above the back</b>. Extremely drought-resistant, rarely drinking.',
+                        ecology: 'Widely distributed in arid open plains, deriving moisture primarily from browsing leaves. Important prey for cheetahs.',
+                        threats: 'As climate droughts worsen, competition for resources with Maasai sheep and goat herds intensifies.'
+                    }
+                },
+                'w-thomsons': {
+                    icon: '🦌',
+                    zh: {
+                        name: '汤氏瞪羚 (Thomson\'s Gazelle)', tagline: 'Eudorcas thomsonii · 短草平原的标志',
+                        behavior: '拥有标志性的<b>侧身粗黑线条</b>，角呈“S”形向后延伸。奔跑速度极快，会频繁改变方向躲避猎豹追捕。',
+                        ecology: '短草平原霸主。紧随迁徙角马斑马之后，专门啃食新长出的短草嫩芽。是猎豹生存的绝对命脉。',
+                        threats: '极度依赖特定短草生态。干旱或家畜过度放牧会导致种群崩溃，进而严重威胁猎豹生存。'
+                    },
+                    en: {
+                        name: 'Thomson\'s Gazelle', tagline: 'Eudorcas thomsonii · Symbol of the short-grass plains',
+                        behavior: 'Features an iconic <b>thick black lateral stripe</b> and S-shaped horns. Extremely fast runners, frequently changing direction to evade cheetahs.',
+                        ecology: 'Lords of the short-grass plains. They follow migrating wildebeests to graze on newly sprouted short grass shoots. The absolute lifeline for cheetahs.',
+                        threats: 'Highly dependent on specific short-grass ecology. Drought or overgrazing directly causes population crashes, severely threatening local cheetahs.'
+                    }
+                },
+                'w-waterbuck': {
+                    icon: '🦌',
+                    zh: {
+                        name: '水羚 (Waterbuck)', tagline: 'Kobus ellipsiprymnus · 带有“白色圆圈”的涉水者',
+                        behavior: '马赛马拉常见的是“圆圈水羚”，最显著特征是屁股上有明显的<b>白色圆环</b>。皮毛粗糙带浓烈麝香味。',
+                        ecology: '极度依赖水源，几乎不远离河流或沼泽活动。遇到危险时，通常会直接逃入深水中避难。',
+                        threats: '旱季河流干涸、水资源污染，以及沿河区域被开垦和放牧导致的栖息地退化。'
+                    },
+                    en: {
+                        name: 'Waterbuck', tagline: 'Kobus ellipsiprymnus · Waders with a "white ring"',
+                        behavior: 'The common type here features a distinct <b>white ring</b> on the rump. They have coarse, shaggy coats that exude a strong musky odor.',
+                        ecology: 'Highly water-dependent, rarely straying from rivers or swamps. When threatened, they often flee directly into deep water for safety.',
+                        threats: 'River drying in droughts, water pollution, and habitat degradation from riverbank cultivation and grazing.'
+                    }
+                },
+                'w-topi': {
+                    icon: '🦌',
+                    zh: {
+                        name: '转角牛羚 (Topi)', tagline: 'Damaliscus lunatus jimela · 白蚁丘上的紫腿哨兵',
+                        behavior: '毛色呈现光亮的红褐色，前肢和大腿有独特的<b>蓝紫色斑块</b>。最喜欢高高站在白蚁丘上放哨视察领地。',
+                        ecology: '高度适应泛滥平原和草甸，偏好啃食中等高度的长草。在马赛马拉拥有数量庞大的常驻种群。',
+                        threats: '作为专职食草动物，直接面临与马赛人家牛争夺优质牧草的激烈竞争。'
+                    },
+                    en: {
+                        name: 'Topi', tagline: 'Damaliscus lunatus jimela · Purple-thighed termite mound sentinels',
+                        behavior: 'Glossy reddish-brown coat with distinct <b>bluish-purple patches</b> on the thighs. Favorite activity is standing tall on termite mounds to survey territory.',
+                        ecology: 'Highly adapted to floodplains and meadows, preferring medium-to-tall grass. Massive resident population in the Mara.',
+                        threats: 'As dedicated grazers, they face direct and intense competition with Maasai cattle for prime pasture.'
+                    }
+                },
+                'w-bushbuck': {
+                    icon: '🦌',
+                    zh: {
+                        name: '林羚 (Bushbuck)', tagline: 'Tragelaphus scriptus · 隐秘在灌木丛中的独行侠',
+                        behavior: '极其隐秘害羞，多为独居。身上有白色斑点和条纹，在树影下提供绝佳伪装。受惊吓会发出类似狗叫的吠声。',
+                        ecology: '只穿梭于茂密的河谷林地和灌木丛，绝不涉足开阔草原。属食叶动物，是花豹的经典猎物。',
+                        threats: '对栖息地要求极为严苛。河谷林地被非法砍伐用于烧炭，对其生存构成致命威胁。'
+                    },
+                    en: {
+                        name: 'Bushbuck', tagline: 'Tragelaphus scriptus · Secretive solitaries of the thickets',
+                        behavior: 'Extremely secretive and shy, mostly solitary. Bodies feature white spots and stripes providing excellent camouflage. Emit a dog-like bark when alarmed.',
+                        ecology: 'Strictly inhabit dense riverine woodlands and thickets, never venturing into open plains. Browsers and classic prey for leopards.',
+                        threats: 'Highly specific habitat requirements. Illegal logging of riverine woodlands for charcoal poses a direct, lethal threat.'
+                    }
+                },
+                'w-dikdik': {
+                    icon: '🦌',
+                    zh: {
+                        name: '犬羚 (Dik-dik)', tagline: 'Madoqua · 巨眼湿鼻的微型精灵',
+                        behavior: '肩高仅约40厘米。有巨大的眼睛和可以上下扭动的<b>湿润鼻头</b>（散热用）。实行严格一夫一妻制，终生相伴。',
+                        ecology: '活跃于干燥灌木林底层。极度耐旱，完全不需要饮水，靠露水和多汁植物生存。',
+                        threats: '因体型太小，面临猛禽、流浪狗等众多中小型掠食者捕杀；灌木丛破坏也会让其失去藏身之所。'
+                    },
+                    en: {
+                        name: 'Dik-dik', tagline: 'Madoqua · Tiny elves with huge eyes and moist snouts',
+                        behavior: 'Extremely small (shoulder height ~40cm). Feature huge eyes and an elongated, <b>moist snout</b> (used for cooling). Strictly monogamous, mating for life.',
+                        ecology: 'Active in the undergrowth of dry scrublands. Extremely drought-resistant, never needing to drink water, surviving entirely on dew and succulent plants.',
+                        threats: 'Due to their size, preyed upon by small predators like raptors and feral dogs. Destruction of thickets also removes hiding spots.'
+                    }
+                }
+            };
+
+            const wGridContainer = document.getElementById('wildlife-grid');
+            const wDetailCard = document.getElementById('wildlife-detail-card');
+            
+            const wIcon = document.getElementById('w-icon');
+            const wName = document.getElementById('w-name');
+            const wTagline = document.getElementById('w-tagline');
+            const wBehavior = document.getElementById('w-behavior');
+            const wEcology = document.getElementById('w-ecology');
+            const wThreats = document.getElementById('w-threats');
+
+            function renderWildlifeGrid() {
+                wGridContainer.innerHTML = '';
+                let firstWBtn = null;
+                const activeKey = document.querySelector('.wildlife-btn.active')?.dataset.key;
+
+                for (const [key, data] of Object.entries(allWildlife)) {
+                    const info = data[window.currentLang];
+                    const clickText = window.currentLang === 'zh' ? '查阅档案' : 'View';
+                    
+                    const btn = document.createElement('button');
+                    btn.className = `wildlife-btn list-btn text-left p-3 lg:p-4 rounded-xl border border-[#4A3728]/20 bg-white text-sm hover:bg-[#D9C5A0]/20 font-bold text-mara-text focus:outline-none flex justify-between items-center transition-all w-full ${key === activeKey ? 'active' : ''}`;
+                    btn.innerHTML = `<span class="flex items-center"><span class="text-2xl mr-3">${data.icon}</span> <span>${info.name}</span></span> <span class="text-xs font-normal opacity-60 hidden lg:inline-block">${clickText}</span>`;
+                    btn.dataset.key = key;
+                    
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.wildlife-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        wDetailCard.style.opacity = 0;
+                        setTimeout(() => {
+                            const wInfo = allWildlife[key][window.currentLang];
+                            
+                            wIcon.innerText = allWildlife[key].icon;
+                            wName.innerText = wInfo.name; 
+                            wTagline.innerText = wInfo.tagline;
+                            
+                            wBehavior.innerHTML = wInfo.behavior;
+                            wEcology.innerHTML = wInfo.ecology;
+                            wThreats.innerHTML = wInfo.threats;
+                            
+                            wDetailCard.scrollTop = 0;
+                            wDetailCard.style.opacity = 1;
+                        }, 200);
+                    });
+                    
+                    wGridContainer.appendChild(btn);
+                    if (!firstWBtn) firstWBtn = btn;
+                }
+                if (!activeKey && firstWBtn) firstWBtn.click();
+            }
+
+            renderWildlifeGrid();
+
+            // ================= 核心双语保护区数据 =================
+            const allConservancies = {
+                'c-01': { 
+                    zh: { name: '马赛马拉国家保护区', tagline: '生态系统的绝对心脏，天国之渡的主舞台', tickets: '【2026年起最新官方收费标准】<br>非东非居民成人：1月-6月 <b>100美元/天</b>；7月-12月（旺季）<b>200美元/天</b>。<br>9-17岁 <b>50美元/天</b>（不分季节）；0-8岁 <b>免费</b>。<br>门票自进入保护区起 <b>12小时内有效</b>。必须提前通过Narok County官方在线系统全额预付。', gates: 'Sekenani (东北部最繁忙的主大门)、Talek (中北部)、Musiara (西北部)、Oloololo (马拉三角州) 以及 Ololaimutia (东部) 等大门。', geo: '与坦桑尼亚塞伦盖蒂国家公园无缝接壤。马拉河与塔莱克河贯穿其中，形成了经典的开阔草原地貌。', airstrip: 'Keekorok, Ol Kiombo, Musiara, Serena 等多个主要跑道', wildlife: '著名“天国之渡”发生地。拥有极高密度的狮群、猎豹和丰富的食草动物。', mgmt: '由肯尼亚纳罗克郡政府管辖。公共保护区，严禁夜间游猎和车辆越野。' },
+                    en: { name: 'Maasai Mara National Reserve', tagline: 'The absolute heart of the ecosystem', tickets: '[New Official Rates from 2026]<br>Non-Resident Adult: <b>$100/day</b> (Jan-Jun); <b>$200/day</b> (Jul-Dec).<br>Child (9-17 yrs): <b>$50/day</b> (All seasons); Child (0-8 yrs): <b>Free</b>.<br>Tickets valid for <b>12 hours</b> from entry. Must be pre-paid online via Narok County portal.', gates: 'Sekenani (Northeastern busiest main gate), Talek (North-central), Musiara (Northwest), Oloololo (Mara Triangle), and Ololaimutia (Eastern) gates.', geo: 'Borders Tanzania\'s Serengeti. The Mara and Talek Rivers run through it, creating classic savannahs.', airstrip: 'Keekorok, Ol Kiombo, Musiara, Serena Airstrips', wildlife: 'Main stage for river crossings. Boasts high densities of lion prides and cheetahs.', mgmt: 'Managed by Narok County. Public reserve; night drives and off-roading prohibited.' }
+                },
+                'c-02': { 
+                    zh: { name: '马拉北保护区 (Mara North)', tagline: '大猫的乐园，面积最广阔的社区保护区之一', geo: '位于核心保护区西北部，是重要野生动物扩散区。', airstrip: 'Mara North (Ngerende) 机场', wildlife: '大猫出没频繁，狮群领地稳固。', mgmt: '由800多位马赛地主成立。实行严格的密度控制，允许受控越野。' },
+                    en: { name: 'Mara North Conservancy', tagline: 'Big cat paradise, largest community conservancy', geo: 'Located northwest of the core reserve, a crucial dispersal area.', airstrip: 'Mara North (Ngerende) Airstrip', wildlife: 'Frequent big cat sightings with stable lion territories.', mgmt: 'Formed by 800+ Maasai landowners. Strict density controls, allowing controlled off-roading.' }
+                },
+                'c-03': { 
+                    zh: { name: '纳博伊肖保护区 (Naboisho)', tagline: '徒步游猎胜地，惊人的狮子密度', geo: '位于马赛马拉东部，地貌丰富。', airstrip: 'Naboisho/Ol Seki 机场', wildlife: '以极高的狮群密度闻名。', mgmt: '惠及600多个马赛家庭。以顶级的徒步游猎（Walking Safari）著称。' },
+                    en: { name: 'Mara Naboisho Conservancy', tagline: 'Walking safari hotspot, stunning lion density', geo: 'Located in eastern Mara, diverse landscapes.', airstrip: 'Naboisho/Ol Seki Airstrip', wildlife: 'Famous for high density of lion prides.', mgmt: 'Benefits 600+ Maasai families. Renowned for premium walking safaris.' }
+                },
+                'c-04': { 
+                    zh: { name: '奥拉雷·莫托罗吉 (Olare Motorogi)', tagline: '极致奢华与极致保护的完美融合', geo: '紧邻核心区北部边界，环境静谧。', airstrip: 'Olare Orok 机场', wildlife: '食草动物常年不减，养育了健康的掠食者种群。', mgmt: '管理极为严格。掠食者与车辆比例极高，动物不受干扰。' },
+                    en: { name: 'Olare Motorogi Conservancy', tagline: 'Blend of ultimate luxury and conservation', geo: 'Bordering core reserve north, extremely tranquil.', airstrip: 'Olare Orok Airstrip', wildlife: 'Year-round herbivores support healthy predators.', mgmt: 'Strictly managed. High predator-to-vehicle ratio ensures animals remain undisturbed.' }
+                },
+                'c-05': { 
+                    zh: { name: '奥肯耶保护区 (Ol Kinyei)', tagline: '先驱之作，纯粹的荒野体验', geo: '位于生态系统东北部边缘，起伏丘陵。', airstrip: 'Ol Seki 或 Siana Springs 机场', wildlife: '大象和花豹的重要栖息地。', mgmt: '最早建立的社区保护区之一。极其注重排他性。' },
+                    en: { name: 'Ol Kinyei Conservancy', tagline: 'Pioneering model, pure wilderness experience', geo: 'Located on northeastern edge, rolling hills.', airstrip: 'Ol Seki or Siana Springs Airstrip', wildlife: 'Vital habitat for elephants and leopards.', mgmt: 'One of the earliest conservancies. Highly exclusive.' }
+                },
+                'c-06': { 
+                    zh: { name: '帕达马特保护区 (Pardamat)', tagline: '人兽共存的创新试验田', geo: '位于主要保护区之间，起到生态走廊作用。', airstrip: '依托周边 Naboisho/Ol Seki 或 Mara North 机场', wildlife: '打通了野生动物迁徙路线。', mgmt: '允许马赛人居住，通过防掠食者围栏实现和谐共存。' },
+                    en: { name: 'Pardamat Conservation Area', tagline: 'Testing ground for coexistence', geo: 'Between major conservancies, critical corridor.', airstrip: 'Accessed via nearby Naboisho/Ol Seki or Mara North Airstrips', wildlife: 'Reopened blocked migration routes.', mgmt: 'Allows Maasai settlement using predator-proof bomas for coexistence.' }
+                },
+                'c-07': { 
+                    zh: { name: '埃农基舒保护区 (Enonkishu)', tagline: '最北端的防线，探索可持续畜牧业', geo: '最北端边界。', airstrip: 'Ngerende 机场', wildlife: '常有河马、鳄鱼出没。', mgmt: '帮助马赛人将牲畜转化为商业价值，减少过度放牧。' },
+                    en: { name: 'Enonkishu Conservancy', tagline: 'Northernmost defense line', geo: 'Northernmost boundary.', airstrip: 'Ngerende Airstrip', wildlife: 'Frequent hippo and crocodile sightings.', mgmt: 'Helps commercialize livestock to reduce overgrazing.' }
+                },
+                'c-08': { 
+                    zh: { name: '奥乔罗·奥鲁瓦 (Ol Chorro)', tagline: '武装护卫的白犀牛庇护所', geo: '马拉北以东。', airstrip: 'Ngerende 机场', wildlife: '最大的看点是24小时武装巡逻保护的白犀牛。', mgmt: '最早实行收取出入费并返还社区的区域。' },
+                    en: { name: 'Ol Chorro Oiroua', tagline: 'Armed guards for white rhinos', geo: 'East of Mara North.', airstrip: 'Ngerende Airstrip', wildlife: 'Main highlight: white rhinos protected by 24/7 patrols.', mgmt: 'Early adopter of fee collection returned to community.' }
+                },
+                'c-09': { 
+                    zh: { name: '莱梅克保护区 (Lemek)', tagline: '观赏猎豹的最佳视角', geo: '典型稀树草原。', airstrip: 'Ngerende 机场 或 Mara North 机场', wildlife: '视野极其开阔，非常适合猎豹高速追逐。', mgmt: '深受专业野生动物摄影师喜爱。' },
+                    en: { name: 'Lemek Conservancy', tagline: 'Best perspective for viewing cheetahs', geo: 'Classic savannah.', airstrip: 'Ngerende or Mara North Airstrip', wildlife: 'Extremely open views, suited for cheetah hunts.', mgmt: 'Highly favored by professional wildlife photographers.' }
+                },
+                'c-10': { 
+                    zh: { name: '奥尔德凯西保护区 (Olderkesi)', tagline: '隐秘的跨境生态走廊', geo: '东南偏隅，与坦桑尼亚接壤。', airstrip: 'Cottar\'s 私人机场 或 Keekorok 机场', wildlife: '肯坦两国间野生动物往返的隐秘走廊。', mgmt: '旨在从农业扩张手中抢救这片走廊。' },
+                    en: { name: 'Olderkesi Conservancy', tagline: 'Hidden cross-border ecological corridor', geo: 'Extreme southeast, bordering Tanzania.', airstrip: 'Cottar\'s Private Airstrip or Keekorok Airstrip', wildlife: 'Hidden corridor for cross-border wildlife.', mgmt: 'Established to rescue this corridor from agriculture.' }
+                },
+                'c-11': { 
+                    zh: { name: '锡亚纳保护区 (Siana)', tagline: '多变的丘陵地形，马赛文化的腹地', geo: '核心区东侧。', airstrip: 'Siana Springs 机场', wildlife: '旱季吸引大量大象和水牛。', mgmt: '保留传统生活方式的马赛村落坐落于此。' },
+                    en: { name: 'Siana Conservancy', tagline: 'Heartland of Maasai culture', geo: 'East of core reserve.', airstrip: 'Siana Springs Airstrip', wildlife: 'Attracts elephants/buffalos in dry season.', mgmt: 'Traditional Maasai villages are located here.' }
+                },
+                'c-12': { 
+                    zh: { name: '纳舒莱保护区 (Nashulai)', tagline: '马赛人完全自营，大象的“育婴房”', geo: '毗邻核心区大门。', airstrip: 'Keekorok 机场 或 Siana Springs 机场', wildlife: '被大量母象选作繁育后代的“托儿所”。', mgmt: '东非第一个完全由马赛社区建立管理的保护区。' },
+                    en: { name: 'Nashulai Maasai Conservancy', tagline: 'Fully Maasai-run, elephant "nursery"', geo: 'Adjacent to core reserve gate.', airstrip: 'Keekorok or Siana Springs Airstrip', wildlife: 'Chosen by female elephants as a "nursery".', mgmt: 'First conservancy fully managed by local Maasai.' }
+                },
+                'c-13': { 
+                    zh: { name: '奥拉罗保护区 (Olarro)', tagline: '顶级的夜间游猎', geo: '属于Loita Hills延伸，气候凉爽。', airstrip: 'Olarro 私人机场 或 Siana Springs 机场', wildlife: '洛伊塔斑马的重要通道。', mgmt: '夜间游猎体验极佳，寻找罕见夜行动物。' },
+                    en: { name: 'Olarro Conservancy', tagline: 'Premium night game drives', geo: 'Extension of Loita Hills, cooler climate.', airstrip: 'Olarro Private Airstrip or Siana Springs', wildlife: 'Important corridor for Loita zebras.', mgmt: 'Exceptional night game drives.' }
+                },
+                'c-14': { 
+                    zh: { name: '尼耶奎里 (Nyekweri)', tagline: '拯救原始森林，守护大象通道', geo: '边缘地带，涵盖基明特特原始森林。', airstrip: 'Angama 机场 或 Kichwa Tembo 机场', wildlife: '大象避难和觅食的核心区域。', mgmt: '通过租赁土地将其转变为保护区，防止大象失去庇护所。' },
+                    en: { name: 'Nyekweri Kimintet Forest', tagline: 'Saving primary forests', geo: 'Covers vital Kimintet primary forest.', airstrip: 'Angama or Kichwa Tembo Airstrip', wildlife: 'Core area for elephant refuge.', mgmt: 'Turning land into conservancy to stop illegal logging.' }
+                },
+                'c-15': { 
+                    zh: { name: '伊萨滕保护区 (Isaaten)', tagline: '填补空白，织密生态保护网', geo: '新近设立，位于缝隙地带。', airstrip: '依托于Siana Springs机场', wildlife: '作为生态“毛细血管”，确保动物畅通无阻。', mgmt: '通过灵活协议，将破碎土地重新拼图。' },
+                    en: { name: 'Isaaten Conservancy', tagline: 'Weaving a dense protection net', geo: 'Newly established in gaps.', airstrip: 'Relies on major airstrips of neighboring conservancies such as Siana Spring aistrip', wildlife: 'Acts as ecological "capillaries".', mgmt: 'Uses flexible leases to piece fragmented land together.' }
+                }
+            };
+
+            const cGridContainer = document.getElementById('conservancy-grid');
+            const cDetailCard = document.getElementById('conservancy-detail-card');
+            const cName = document.getElementById('c-name');
+            const cTagline = document.getElementById('c-tagline');
+            const cArea = document.getElementById('c-area');
+            const cGeo = document.getElementById('c-geo');
+            const cAirstrip = document.getElementById('c-airstrip'); 
+            const cWildlife = document.getElementById('c-wildlife');
+            const cMgmt = document.getElementById('c-mgmt');
+            
+            const cTicketsContainer = document.getElementById('c-tickets-container');
+            const cTickets = document.getElementById('c-tickets');
+            
+            const cGatesContainer = document.getElementById('c-gates-container');
+            const cGates = document.getElementById('c-gates');
+
+            function renderConservancyGrid() {
+                cGridContainer.innerHTML = '';
+                let firstBtn = null;
+                const activeKey = document.querySelector('.conservancy-btn.active')?.dataset.key;
+
+                for (const [key, data] of Object.entries(allConservancies)) {
+                    const info = data[window.currentLang];
+                    const clickText = window.currentLang === 'zh' ? '点击查阅' : 'View';
+                    
+                    const btn = document.createElement('button');
+                    btn.className = `conservancy-btn list-btn text-left p-3 lg:p-4 rounded-xl border border-mara-sand/50 bg-white text-sm hover:bg-mara-sand/20 font-bold text-mara-text focus:outline-none flex justify-between items-center transition-all w-full ${key === activeKey ? 'active' : ''}`;
+                    btn.innerHTML = `<span>${info.name}</span> <span class="text-xs font-normal text-mara-text/50 hidden lg:inline-block">${clickText}</span>`;
+                    btn.dataset.key = key;
+                    
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.conservancy-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        cDetailCard.style.opacity = 0;
+                        setTimeout(() => {
+                            const cInfo = allConservancies[key][window.currentLang];
+                            const areaLabel = window.currentLang === 'zh' ? '面积: ' : 'Area: ';
+                            const areaMap = {'c-01':'1,510', 'c-02':'~300', 'c-03':'~210', 'c-04':'~135', 'c-05':'~73', 'c-06':'~260', 'c-07':'~24', 'c-08':'~69', 'c-09':'~45', 'c-10':'~40', 'c-11':'~280', 'c-12':'~24', 'c-13':'~110', 'c-14':'Ext.', 'c-15':'New'};
+                            
+                            cName.innerText = cInfo.name;
+                            cTagline.innerText = cInfo.tagline;
+                            cArea.innerText = areaLabel + areaMap[key] + ' km²';
+                            
+                            if (cInfo.tickets) {
+                                cTickets.innerHTML = cInfo.tickets;
+                                cTicketsContainer.style.display = 'block';
+                            } else {
+                                cTicketsContainer.style.display = 'none';
+                            }
+
+                            if (cInfo.gates) {
+                                cGates.innerHTML = cInfo.gates;
+                                cGatesContainer.style.display = 'block';
+                            } else {
+                                cGatesContainer.style.display = 'none';
+                            }
+                            
+                            cGeo.innerText = cInfo.geo;
+                            cAirstrip.innerText = cInfo.airstrip; 
+                            cWildlife.innerText = cInfo.wildlife;
+                            cMgmt.innerText = cInfo.mgmt;
+                            
+                            cDetailCard.scrollTop = 0;
+                            cDetailCard.style.opacity = 1;
+                        }, 200);
+                    });
+                    
+                    cGridContainer.appendChild(btn);
+                    if (!firstBtn) firstBtn = btn;
+                }
+                if (!activeKey && firstBtn) firstBtn.click();
+            }
+
+            renderConservancyGrid();
+
+            // --- 导航与图表逻辑 ---
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.section-content');
+            
+            let migrationChartInst = null;
+
+            const chartOptionsBase = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: '"Open Sans", "Noto Sans SC", sans-serif' }, color: '#4A3728' } },
+                    tooltip: { backgroundColor: 'rgba(74, 55, 40, 0.95)', padding: 14, cornerRadius: 6, titleFont: {size: 14}, bodyFont: {size: 13} }
+                }
+            };
+
+            function renderMigrationChart() {
+                const ctx = document.getElementById('migrationChart').getContext('2d');
+                if (migrationChartInst) migrationChartInst.destroy();
+                
+                const labelsZh = ['6月 (抵达)', '7月 (渡河)', '8月 (覆盖)', '9月 (高峰)', '10月 (南返)', '11月 (尾声)'];
+                const labelsEn = ['Jun (Arrival)', 'Jul (Crossing)', 'Aug (Coverage)', 'Sep (Peak)', 'Oct (Return)', 'Nov (End)'];
+                const dsLabelsZh = ['角马数量 (万只)', '斑马数量 (万只)'];
+                const dsLabelsEn = ['Wildebeest (10k)', 'Zebras (10k)'];
+
+                migrationChartInst = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: window.currentLang === 'zh' ? labelsZh : labelsEn,
+                        datasets: [
+                            { label: window.currentLang === 'zh' ? dsLabelsZh[0] : dsLabelsEn[0], data: [10, 80, 150, 140, 60, 15], backgroundColor: '#4A3728', borderRadius: 4, barPercentage: 0.7 },
+                            { label: window.currentLang === 'zh' ? dsLabelsZh[1] : dsLabelsEn[1], data: [5, 15, 30, 28, 10, 5], backgroundColor: '#D22B2B', borderRadius: 4, barPercentage: 0.7 }
+                        ]
+                    },
+                    options: {
+                        ...chartOptionsBase,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#EADCBB' }, ticks: {color: '#4A3728'} },
+                            x: { grid: { display: false }, ticks: {color: '#4A3728'} }
+                        }
+                    }
+                });
+            }
+
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    sections.forEach(sec => sec.classList.remove('active'));
+                    const targetId = btn.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+
+                    if(targetId === 'sec-overview') {
+                        setTimeout(() => { if (maraMap) maraMap.invalidateSize(); }, 200);
+                    }
+
+                    if(targetId === 'sec-migration') setTimeout(renderMigrationChart, 100);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
