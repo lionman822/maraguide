@@ -144,6 +144,7 @@
                 <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-orgs" data-zh="主要野保机构" data-en="Key Organizations">主要野保机构</button>
                 <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-mnhc" data-zh="马拉野保学院" data-en="MNHC">马拉野保学院</button>
                 <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-supporters" data-zh="支持机构" data-en="Supporting Organizations">支持机构</button>
+                <button class="nav-btn pb-3 px-1 whitespace-nowrap text-mara-text/60 hover:text-mara-text transition-colors text-sm sm:text-base font-medium i18n" data-target="sec-honor" data-zh="野保光荣榜" data-en="Honor Roll">野保光荣榜</button>
             </nav>
         </div>
     </header>
@@ -263,12 +264,6 @@
                 <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl mb-8 i18n" data-zh="马赛马拉（Maasai Mara）位于肯尼亚西南部。其南边与坦桑尼亚的塞伦盖蒂（Serengeti）无缝接壤；西部是陡峭的奥卢洛罗/锡里亚悬崖（Oloololo / Siria Escarpment）；东部一直延伸到沙河（Sand River）的中上游地带；北部延伸到马拉河的中游地带；而东北部则是广阔的洛伊塔平原（Loita Plains）。" data-en="The Maasai Mara is located in southwestern Kenya. It borders Tanzania's Serengeti to the south, the steep Oloololo (Siria) Escarpment to the west, extends to the mid-upper Sand River to the east, the mid-Mara River to the north, and the vast Loita Plains to the northeast.">
                     马赛马拉（Maasai Mara）位于肯尼亚西南部。其南边与坦桑尼亚的塞伦盖蒂（Serengeti）无缝接壤；西部是陡峭的奥卢洛罗/锡里亚悬崖（Oloololo / Siria Escarpment）；东部一直延伸到沙河（Sand River）的中上游地带；北部延伸到马拉河的中游地带；而东北部则是广阔的洛伊塔平原（Loita Plains）。
                 </p>
-
-                <div class="w-full bg-[#EADCBB]/20 border-2 border-dashed border-mara-sand rounded-2xl p-10 text-center mb-10 flex flex-col items-center justify-center hover:bg-[#EADCBB]/30 transition">
-                    <span class="text-5xl mb-4">🗺️</span>
-                    <span class="text-mara-text/80 font-bold text-lg i18n" data-zh="" data-en=""></span>
-                    <span class="text-mara-text/50 text-sm mt-2 i18n" data-zh="上图：马赛马拉地形图" data-en="Above: Topographic map of the Maasai Mara">上图：马赛马拉地形图</span>
-                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -544,6 +539,51 @@
                 </div>
             </div>
 
+            <!-- 大迁徙全年循环时间轴图表 -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="大迁徙全年循环时间轴" data-en="Annual Migration Cycle Timeline">大迁徙全年循环时间轴</h3>
+                <div class="bg-white rounded-2xl shadow-md border-t-8 border-mara-accent overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-mara-bg text-mara-text border-b border-mara-sand/50 text-base">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4 font-bold i18n" data-zh="时间" data-en="Time">时间</th>
+                                    <th scope="col" class="px-6 py-4 font-bold border-l border-white i18n" data-zh="主要区域" data-en="Main Area">主要区域</th>
+                                    <th scope="col" class="px-6 py-4 font-bold border-l border-white i18n" data-zh="生态特征" data-en="Ecological Features">生态特征</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-mara-sand/30">
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text whitespace-nowrap"><span class="text-lg mr-2">🌱</span><span class="i18n" data-zh="1—3月" data-en="Jan-Mar">1—3月</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="塞伦盖蒂南部、恩戈罗恩戈罗保护区附近" data-en="Southern Serengeti, near Ngorongoro">塞伦盖蒂南部、恩戈罗恩戈罗保护区附近</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="短草平原，<b>角马集中产仔</b>。" data-en="Short grass plains, <b>concentrated wildebeest calving</b>.">短草平原，<b>角马集中产仔</b>。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text whitespace-nowrap"><span class="text-lg mr-2">🌧️</span><span class="i18n" data-zh="4—5月" data-en="Apr-May">4—5月</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="塞伦盖蒂中部、西部走廊" data-en="Central Serengeti, Western Corridor">塞伦盖蒂中部、西部走廊</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="雨季后草场变化，群体向西北移动。" data-en="Post-rainy season pasture changes, herds move northwest.">雨季后草场变化，群体向西北移动。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text whitespace-nowrap"><span class="text-lg mr-2">🐊</span><span class="i18n" data-zh="6—7月" data-en="Jun-Jul">6—7月</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="Grumeti 河一带" data-en="Grumeti River area">Grumeti 河一带</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="逐渐进入干季，开始重要河流跨越。" data-en="Gradually entering dry season, starting important river crossings.">逐渐进入干季，开始重要河流跨越。</td>
+                                </tr>
+                                <tr class="bg-mara-accent/5 hover:bg-mara-accent/10 border-l-4 border-l-mara-accent">
+                                    <td class="px-6 py-4 font-bold text-mara-text whitespace-nowrap"><span class="text-lg mr-2">🦁</span><span class="i18n" data-zh="7—10月" data-en="Jul-Oct">7—10月</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-bold text-mara-accent i18n" data-zh="塞伦盖蒂北部、马赛马拉" data-en="Northern Serengeti, Maasai Mara">塞伦盖蒂北部、马赛马拉</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 font-medium i18n" data-zh="马拉河渡河，高度集中，也是<b>最著名阶段</b>。" data-en="Mara River crossing, highly concentrated, the <b>most famous stage</b>.">马拉河渡河，高度集中，也是<b>最著名阶段</b>。</td>
+                                </tr>
+                                <tr class="hover:bg-mara-sand/5">
+                                    <td class="px-6 py-4 font-bold text-mara-text whitespace-nowrap"><span class="text-lg mr-2">⛈️</span><span class="i18n" data-zh="11—12月" data-en="Nov-Dec">11—12月</span></td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="重新南下" data-en="Heading south again">重新南下</td>
+                                    <td class="px-6 py-4 border-l border-mara-sand/20 i18n" data-zh="随短雨返回塞伦盖蒂南部短草平原。" data-en="Following short rains back to Southern Serengeti short grass plains.">随短雨返回塞伦盖蒂南部短草平原。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-mara-text text-white p-8 rounded-2xl shadow-md border-t-4 border-mara-sand relative overflow-hidden">
                 <div class="absolute -right-10 -bottom-10 opacity-10 text-[180px] leading-none">🐃</div>
                 <h4 class="font-bold text-2xl font-serif mb-4 flex items-center i18n" data-zh="<span class='text-mara-sand mr-3'>🌍</span> 大迁徙的生态基石作用" data-en="<span class='text-mara-sand mr-3'>🌍</span> Ecological Keystone of the Migration">
@@ -795,29 +835,47 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- 1. KWS (新增) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-accent">
+                    <div class="text-4xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="肯尼亚野生动物管理局 (KWS)" data-en="Kenya Wildlife Service (KWS)">肯尼亚野生动物管理局 (KWS)</h3>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="肯尼亚负责保护和管理野生动物的最高国家官方机构。在马赛马拉全面负责打击国家级盗猎犯罪、执行野生动物保护法，并在重大人兽冲突中提供关键的官方武装干预和技术支持。" data-en="The premier government agency responsible for wildlife conservation in Kenya. In the Mara, they combat high-level poaching, enforce wildlife laws, and provide critical armed intervention in severe human-wildlife conflicts.">肯尼亚负责保护和管理野生动物的最高国家官方机构。在马赛马拉全面负责打击国家级盗猎犯罪、执行野生动物保护法，并在重大人兽冲突中提供关键的官方武装干预和技术支持。</p>
+                </div>
+
+                <!-- 2. MMWCA -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
                     <div class="text-4xl mb-4">🤝</div>
                     <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="大马拉保护区协会 (MMWCA)" data-en="Maasai Mara Conservancies (MMWCA)">大马拉保护区协会 (MMWCA)</h3>
                     <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="统筹整个社区保护区网络的伞形组织。协调马赛社区保护区的利益，推动土地租赁模式的规范化，确保旅游收入公平回馈给当地马赛地主，保障核心生态走廊的畅通无阻。" data-en="The umbrella organization coordinating the entire network. Coordinates 15 Maasai conservancies, standardizing land lease models, ensuring fair tourism revenue distribution to Maasai landowners, and securing core ecological corridors.">统筹整个社区保护区网络的伞形组织。协调马赛社区保护区的利益，推动土地租赁模式的规范化，确保旅游收入公平回馈给当地马赛地主，保障核心生态走廊的畅通无阻。</p>
                 </div>
 
+                <!-- 3. Mara Conservancy (新增) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
+                    <div class="text-4xl mb-4">🏞️</div>
+                    <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉三角洲 (Mara Conservancy)" data-en="Mara Conservancy">马拉三角洲 (Mara Conservancy)</h3>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="负责管理马赛马拉国家保护区西北部（马拉三角洲）的非营利性管理机构。以其卓越的透明化管理、极其严格的反盗猎巡逻和绝佳的基础设施维护而闻名，是公私合作保护的全球典范。" data-en="A non-profit organization managing the northwestern sector of the MMNR (the Mara Triangle). Renowned for its transparent management, rigorous anti-poaching patrols, and excellent infrastructure maintenance, serving as a global model for public-private partnerships.">负责管理马赛马拉国家保护区西北部（马拉三角洲）的非营利性管理机构。以其卓越的透明化管理、极其严格的反盗猎巡逻和绝佳的基础设施维护而闻名，是公私合作保护的全球典范。</p>
+                </div>
+
+                <!-- 4. MEP -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
                     <div class="text-4xl mb-4">🐘</div>
                     <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉大象项目 (MEP)" data-en="Mara Elephant Project (MEP)">马拉大象项目 (MEP)</h3>
                     <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="专注于大象保护与人象冲突化解。利用先进的GPS项圈追踪大象移动轨迹，并部署直升机和快速反应部队，驱赶误入农田的大象，打击象牙盗猎，保卫马赛马拉关键的森林栖息地。" data-en="Focused on elephant conservation and conflict mitigation. Uses GPS collars to track elephants, deploying helicopters and rapid response units to drive elephants from farms, combat ivory poaching, and protect critical forest habitats.">专注于大象保护与人象冲突化解。利用先进的GPS项圈追踪大象移动轨迹，并部署直升机和快速反应部队，驱赶误入农田的大象，打击象牙盗猎，保卫马赛马拉关键的森林栖息地。</p>
                 </div>
 
+                <!-- 5. MPCP -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
                     <div class="text-4xl mb-4">🐆</div>
                     <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="马拉猛兽保护项目 (MPCP)" data-en="Mara Predator Conservation (MPCP)">马拉猛兽保护项目 (MPCP)</h3>
                     <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="聚焦大型食肉动物的科学研究与保护。长期监测狮子、猎豹、花豹的种群动态。与社区深度合作建设防掠食者围栏（Bomas），从根本上减少马赛人因牲畜被捕杀而进行的报复性猎杀。" data-en="Focused on research and conservation of large carnivores. Long-term monitoring of lion, cheetah, and leopard populations. Partners with communities to build predator-proof Bomas, fundamentally reducing retaliatory killings by pastoralists.">聚焦大型食肉动物的科学研究与保护。长期监测狮子、猎豹、花豹的种群动态。与社区深度合作建设防掠食者围栏（Bomas），从根本上减少马赛人因牲畜被捕杀而进行的报复性猎杀。</p>
                 </div>
 
+                <!-- 6. SWT -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#EADCBB] hover:-translate-y-1 transition-transform border-t-4 border-t-mara-green">
                     <div class="text-4xl mb-4">🚑</div>
                     <h3 class="text-xl font-bold text-mara-text mb-2 i18n" data-zh="SWT 马拉移动兽医单元" data-en="SWT Mara Mobile Vet Unit">SWT 马拉移动兽医单元</h3>
-                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="由谢尔德里克野生动物基金会主导运营。与肯尼亚野生动物服务局（KWS）携手，在广袤的草原上提供紧急兽医救助，其首要任务之一是为被盗猎者布置的钢丝套误伤的野生动物进行拆除和治疗。" data-en="Operated by the Sheldrick Wildlife Trust. Partners with KWS to provide emergency veterinary care across the savannah, primarily treating wildlife injured by poachers' wire snares.">由谢尔德里克野生动物基金会主导运营。与肯尼亚野生动物服务局（KWS）携手，在广袤的草原上提供紧急兽医救助，其首要任务之一是为被盗猎者布置的钢丝套误伤的野生动物进行拆除和治疗。</p>
+                    <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="由谢尔德里克野生动物基金会主导运营。与肯尼亚野生动物管理局（KWS）携手，在广袤的草原上提供紧急兽医救助，首要任务之一是为被钢丝套误伤的野生动物进行拆除和治疗。" data-en="Operated by the Sheldrick Wildlife Trust. Partners with KWS to provide emergency veterinary care across the savannah, primarily treating wildlife injured by poachers' wire snares.">由谢尔德里克野生动物基金会主导运营。与肯尼亚野生动物管理局（KWS）携手，在广袤的草原上提供紧急兽医救助，首要任务之一是为被钢丝套误伤的野生动物进行拆除和治疗。</p>
                 </div>
             </div>
         </section>
@@ -1058,6 +1116,272 @@
             </div>
         </section>
 
+        <!-- ================= 野保光荣榜 ================= -->
+        <section id="sec-honor" class="section-content">
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-mara-text mb-4 i18n" data-zh="🏆 野保光荣榜：马赛马拉杰出人物名录" data-en="🏆 Conservation Honor Roll: Distinguished Figures">🏆 野保光荣榜：马赛马拉杰出人物名录</h2>
+                <p class="text-lg text-mara-text/80 leading-relaxed max-w-4xl mb-6 i18n" data-zh="致敬所有为马赛马拉野保事业做出卓越贡献的朋友们。大自然的保护不仅依赖于机构，更离不开每一个倾注热血、汗水与资源的个体。" data-en="Paying tribute to all the friends who have made outstanding contributions to conservation in the Maasai Mara. Protecting nature relies not only on institutions but on every individual who pours their passion, sweat, and resources into the cause.">
+                    致敬所有为马赛马拉野保事业做出卓越贡献的朋友们。大自然的保护不仅依赖于机构，更离不开每一个倾注热血、汗水与资源的个体。
+                </p>
+            </div>
+
+            <!-- 分组 1: 马拉野保学院联合创始人 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="马拉野保学院联合创始人" data-en="MNHC Co-Founders">马拉野保学院联合创始人</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-mara-sand/30 border-t-4 border-t-mara-accent relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-[100px] opacity-[0.04] group-hover:scale-110 transition-transform">🤠</div>
+                        <h4 class="font-bold text-xl mb-2 text-mara-text i18n" data-zh="星巴 (Simba)" data-en="Simba">星巴 (Simba)</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="野保探险家，IUCN国际自然保护联盟自然保护地委员会专家，马拉野保学院联合创始人。" data-en="Wildlife Explorer, Expert at IUCN World Commission on Protected Areas, Co-founder of MNHC.">野保探险家，IUCN国际自然保护联盟自然保护地委员会专家，马拉野保学院联合创始人。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-mara-sand/30 border-t-4 border-t-mara-sand relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-[100px] opacity-[0.04] group-hover:scale-110 transition-transform">🌿</div>
+                        <h4 class="font-bold text-xl mb-2 text-mara-text i18n" data-zh="西蒙·马萨哥 (Simon Masago)" data-en="Simon Masago">西蒙·马萨哥 (Simon Masago)</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="马赛族人，野外生存专家，马赛马拉最顶级的野外向导之一，马赛马拉妇女发展项目联合发起人，马拉野保学院联合创始人。" data-en="Maasai, Wilderness Survival Expert, one of the best Safari Guides in the Mara, Co-initiator of the Maasai Women Development Project, Co-founder of MNHC.">马赛族人，野外生存专家，马赛马拉最顶级的野外向导之一，马赛马拉妇女发展项目联合发起人，马拉野保学院联合创始人。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-mara-sand/30 border-t-4 border-t-mara-green relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-[100px] opacity-[0.04] group-hover:scale-110 transition-transform">🌍</div>
+                        <h4 class="font-bold text-xl mb-2 text-mara-text i18n" data-zh="曹筱玲 (Cao Xiaoling)" data-en="Cao Xiaoling">曹筱玲 (Cao Xiaoling)</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="HWF栖息地守望者基金会联合创始人，马拉野保学院联合创始人。" data-en="Co-founder of HWF Habitat Watch Foundation, Co-founder of MNHC.">HWF栖息地守望者基金会联合创始人，马拉野保学院联合创始人。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分组 2: 马赛马拉生命科学博物馆联合创始人 (新增) -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="马赛马拉生命科学博物馆联合创始人" data-en="Life Science Museum Co-Founders">马赛马拉生命科学博物馆联合创始人</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-t-4 border-t-mara-accent">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="星巴 (Simba)" data-en="Simba">星巴 (Simba)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="野保探险家" data-en="Wildlife Conservation Explorer">野保探险家</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-t-4 border-t-[#007BFF]">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="尹烨 (Yin Ye)" data-en="Yin Ye">尹烨 (Yin Ye)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="知名生命科学专家、科普学者" data-en="Renowned Life Scientist & Science Communicator">知名生命科学专家、科普学者</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-t-4 border-t-mara-sand">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="刘勇 (Liu Yong)" data-en="Liu Yong">刘勇 (Liu Yong)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="小野马爸爸国际游学创始人" data-en="Founder of Little Mustang Papa International Edu-Tour">小野马爸爸国际游学创始人</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-t-4 border-t-[#4A3728]">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="西蒙·马萨哥 (Simon Masago)" data-en="Simon Masago">西蒙·马萨哥 (Simon Masago)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族顶级野外生存专家" data-en="Top Maasai Wilderness Survival Expert">马赛族顶级野外生存专家</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-t-4 border-t-mara-green">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Simon Nkoitoi" data-en="Simon Nkoitoi">Simon Nkoitoi</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="肯尼亚著名野保人士，第一所野外向导学校联合创始人，奥肯耶保护区首席管理员。" data-en="Renowned Kenyan Conservationist, Chief Warden of the Ol Kinyei Conservancy.">肯尼亚著名野保人士，第一所野外向导学校联合创始人，奥肯耶保护区首席管理员。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分组 3: 马赛马拉生态守护者与行业领袖 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-mara-text mb-6 border-b-2 border-mara-sand/50 pb-2 inline-block i18n" data-zh="杰出野保人士与生态守护者" data-en="Conservation Leaders & Guardians">杰出野保人士与生态守护者</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="尼尔森·瑞亚 (Nelson Ole Reiyia)" data-en="Nelson Ole Reiyia">尼尔森·瑞亚 (Nelson Ole Reiyia)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。马赛马拉纳书莱保护区 (Nashulai) 和纳书莱学院的联合创始人。" data-en="Maasai. Co-founder of Nashulai Maasai Conservancy and Nashulai College.">马赛族人。马赛马拉纳书莱保护区 (Nashulai) 和纳书莱学院的联合创始人。</p>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="杰克森·卢塞亚 (Jackson Looseyia)" data-en="Jackson Looseyia">杰克森·卢塞亚 (Jackson Looseyia)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。最知名的野外向导，BBC《大猫日记》现场解说，马拉瑞波伊保护区联合创始人。" data-en="Maasai. Renowned guide, BBC 'Big Cat Diary' presenter, Co-founder of Mara Ripoi Conservancy.">马赛族人。最知名的野外向导，BBC《大猫日记》现场解说，马拉瑞波伊保护区联合创始人。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Dominic Mijele 博士 & Campaign Limo 博士" data-en="Dr. Dominic Mijele & Dr. Campaign Limo">Dominic Mijele 博士 & Campaign Limo 博士</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="肯尼亚著名兽医 (KWS)。长期驻扎马赛马拉，奋战在一线救助受伤的濒危动物。" data-en="Renowned Kenyan vets (KWS). Long-term stationed in the Mara, rescuing injured endangered wildlife.">肯尼亚著名兽医 (KWS)。长期驻扎马赛马拉，奋战在一线救助受伤的濒危动物。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-sand">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="詹姆斯·森迪约 (James Sindiyo)" data-en="James Sindiyo">詹姆斯·森迪约 (James Sindiyo)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。著名野保人士，曾多年担任马赛马拉国家保护区首席管理员 (Chief Warden)。" data-en="Maasai. Renowned conservationist, former Chief Warden of the Maasai Mara National Reserve for years.">马赛族人。著名野保人士，曾多年担任马赛马拉国家保护区首席管理员 (Chief Warden)。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-sand">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="麦克·科凯 (Michael Kokai)" data-en="Michael Kokai">麦克·科凯 (Michael Kokai)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。曾多年担任马赛马拉国家保护区首席管理员。" data-en="Maasai. Former Chief Warden of the Maasai Mara National Reserve for years.">马赛族人。曾多年担任马赛马拉国家保护区首席管理员。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-sand">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="詹姆斯·库约尼 (James Kuyioni)" data-en="James Kuyioni">詹姆斯·库约尼 (James Kuyioni)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。曾多年担任马赛马拉国家保护区首席管理员。" data-en="Maasai. Former Chief Warden of the Maasai Mara National Reserve for years.">马赛族人。曾多年担任马赛马拉国家保护区首席管理员。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-sand">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="斯蒂芬·米尼斯 (Stephen Minis)" data-en="Stephen Minis">斯蒂芬·米尼斯 (Stephen Minis)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="曾多年担任马赛马拉国家保护区首席管理员。" data-en="Former Chief Warden of the Maasai Mara National Reserve for years.">曾多年担任马赛马拉国家保护区首席管理员。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Simon Nkoitoi" data-en="Simon Nkoitoi">Simon Nkoitoi</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="著名野保人士，奥肯耶保护区首席管理员，第一所野外向导学校 Koiyaki 的联合创始人。" data-en="Renowned conservationist, Chief Warden of Ol Kinyei Conservancy, Co-founder of Koiyaki Guiding School.">著名野保人士，奥肯耶保护区首席管理员，第一所野外向导学校 Koiyaki 的联合创始人。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="布里安·海尔斯 (Brian Heath)" data-en="Brian Heath">布里安·海尔斯 (Brian Heath)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="著名野保人士，以卓越管理闻名的马拉三角洲 (Mara Conservancy) 创始人。" data-en="Renowned conservationist, founder of the Mara Conservancy (managing the Mara Triangle).">著名野保人士，以卓越管理闻名的马拉三角洲 (Mara Conservancy) 创始人。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="马克·戈斯 (Marc Goss)" data-en="Marc Goss">马克·戈斯 (Marc Goss)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="著名野保人士，马赛马拉大象保护项目 (Mara Elephant Project) 主管。" data-en="Renowned conservationist, Director of the Mara Elephant Project (MEP).">著名野保人士，马赛马拉大象保护项目 (Mara Elephant Project) 主管。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="西蒙·托塞特 (Simon Thomsett)" data-en="Simon Thomsett">西蒙·托塞特 (Simon Thomsett)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="世界著名猛禽研究专家。长期在马赛马拉研究和救助极度濒危的秃鹫种群。" data-en="World-renowned raptor expert. Long-term researcher and rescuer of vulture populations in the Mara.">世界著名猛禽研究专家。长期在马赛马拉研究和救助极度濒危的秃鹫种群。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="赛米·姆普西亚 (Sammy Mpusia)" data-en="Sammy Mpusia">赛米·姆普西亚 (Sammy Mpusia)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。奥肯耶保护区 (Ol Kinyei Conservancy) 联合创始人。" data-en="Maasai. Co-founder of Ol Kinyei Conservancy.">马赛族人。奥肯耶保护区 (Ol Kinyei Conservancy) 联合创始人。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Jake Grieves-Cook & Mohanjeet Brar" data-en="Jake Grieves-Cook & Mohanjeet Brar">Jake Grieves-Cook & Mohanjeet Brar</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="Gamewatchers、奥肯耶保护区及马拉瑞波伊保护区的联合创始人。" data-en="Co-founders of Gamewatchers Safaris, Ol Kinyei Conservancy, and Mara Ripoi Conservancy.">Gamewatchers、奥肯耶保护区及马拉瑞波伊保护区的联合创始人。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-green">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="约瑟夫·莱托罗 (Joseph Kipiri Letoluo)" data-en="Joseph Kipiri Letoluo">约瑟夫·莱托罗 (Joseph Kipiri Letoluo)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。现任马拉瑞波伊保护区 (Mara Ripoi) 首席管理员。" data-en="Maasai. Chief Warden of Mara Ripoi Conservancy.">马赛族人。现任马拉瑞波伊保护区 (Mara Ripoi) 首席管理员。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition border-l-4 border-l-mara-green">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="杰瑞米亚·恩托夸万 (Jeremiah Ntokoiwuan)" data-en="Jeremiah Ntokoiwuan">杰瑞米亚·恩托夸万 (Jeremiah Ntokoiwuan)</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="马赛族人。现任奥拉罗保护区 (Olarro) 管理员。" data-en="Maasai. Warden of Olarro Conservancy.">马赛族人。现任奥拉罗保护区 (Olarro) 管理员。</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition">
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Joseph Kennedy Kerempe" data-en="Joseph Kennedy Kerempe">Joseph Kennedy Kerempe</h4>
+                        <p class="text-xs text-mara-text/80 i18n" data-zh="恩苏瓦尼 (Ngoswani) 地区基督教会牧师。经常参与并大力支持本地野保事业。" data-en="Pastor of the Christian church in Ngoswani. Frequently participates in and supports local conservation.">恩苏瓦尼 (Ngoswani) 地区基督教会牧师。经常参与并大力支持本地野保事业。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分组 3: 华人贡献者功勋墙 (全新重构) -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border-t-8 border-[#D22B2B]">
+                <h3 class="text-2xl font-bold text-mara-text mb-4 flex items-center i18n" data-zh="<span class='text-3xl mr-3'>❤️</span> 华人野保贡献者阵列" data-en="<span class='text-3xl mr-3'>❤️</span> Global Chinese Conservation Supporters">
+                    <span class="text-3xl mr-3">❤️</span> 华人野保贡献者阵列
+                </h3>
+                <p class="text-mara-text/80 leading-relaxed mb-8 i18n" data-zh="特别鸣谢以下来过马赛马拉，并为野生动物保护做出巨大实际贡献的中国朋友们。正是全球华人力量的不断汇聚和真金白银的投入，让我们的生态共同体愈发坚不可摧：" data-en="Special thanks to the following Chinese friends who have visited the Mara and made massive, tangible contributions to wildlife conservation. The continuous gathering of global Chinese support and investment makes our ecological community indestructible:">
+                    特别鸣谢以下来过马赛马拉，并为野生动物保护做出巨大实际贡献的中国朋友们。正是全球华人力量的不断汇聚和真金白银的投入，让我们的生态共同体愈发坚不可摧：
+                </p>
+
+                <!-- 杰出贡献高亮卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">💰</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="陈亮兵、陈福琴" data-en="Chen Liangbing & Chen Fuqin">陈亮兵、陈福琴</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="向马拉野保基金会提供了极具历史意义的<b>第一笔启动捐赠（1万美元）</b>。" data-en="Provided the historically significant <b>first seed donation ($10,000)</b> to the Mara Conservation Fund.">向马拉野保基金会提供了极具历史意义的<b>第一笔启动捐赠（1万美元）</b>。</p>
+                    </div>
+
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">🏛️</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="尹烨 (华大基因CEO)" data-en="Yin Ye (CEO of BGI)">尹烨 (华大基因CEO)</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="慷慨捐赠 <b>人民币 40 万元</b>，专项用于马赛马拉自然保护中心（生命科学博物馆）的修建和布展工作。" data-en="Generously donated <b>400,000 RMB</b> specifically for the construction and exhibition of the Mara Life Science Museum.">慷慨捐赠 <b>人民币 40 万元</b>，专项用于马赛马拉自然保护中心（生命科学博物馆）的修建和布展工作。</p>
+                    </div>
+
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">🦁</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="黄洲、陈蓉 & 刘勇" data-en="Huang Zhou, Chen Rong & Liu Yong">黄洲、陈蓉 & 刘勇</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="通过“天使和坚果派”项目及“野保研学”项目，累计捐赠修建了 <b>15个防狮围栏 (Bomas)</b>，极大缓解了人兽冲突。" data-en="Through their respective education projects, they funded the construction of <b>15 predator-proof Bomas</b>, greatly mitigating human-wildlife conflict.">通过“天使和坚果派”项目及“野保研学”项目，累计捐赠修建了 <b>15个防狮围栏 (Bomas)</b>，极大缓解了人兽冲突。</p>
+                    </div>
+
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">🚙</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="梁耀生 & 黄彦为" data-en="Liang Yaosheng & Huang Yanwei">梁耀生 & 黄彦为</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="梁耀生捐赠了一辆 <b>丰田陆地巡洋舰</b>；黄彦为捐赠了一辆 <b>铃木 Maruti 越野车</b>，极大地支持了一线野保机动能力。" data-en="Liang Yaosheng donated a <b>Toyota Land Cruiser</b>; Huang Yanwei donated a <b>Suzuki Maruti SUV</b>, massively boosting frontline mobility.">梁耀生捐赠了一辆 <b>丰田陆地巡洋舰</b>；黄彦为捐赠了一辆 <b>铃木 Maruti 越野车</b>，极大地支持了一线野保机动能力。</p>
+                    </div>
+
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">🏍️</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="Elisa Yu & Sonia Lai" data-en="Elisa Yu & Sonia Lai">Elisa Yu & Sonia Lai</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="为保护区一线巡护员联合捐赠了 <b>17辆巡逻摩托车</b>，构筑了反盗猎的快速反应网络。" data-en="Jointly donated <b>17 patrol motorcycles</b> for frontline rangers, building a rapid response network against poaching.">为保护区一线巡护员联合捐赠了 <b>17辆巡逻摩托车</b>，构筑了反盗猎的快速反应网络。</p>
+                    </div>
+
+                    <div class="bg-mara-bg p-5 rounded-xl border border-mara-sand/40 hover:shadow-md transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">⚽</div>
+                        <h4 class="font-bold text-mara-text mb-1 i18n" data-zh="曹筱玲、刘赋、刘涟莲、刘桐汐" data-en="Cao Xiaoling, Liu Fu, Liu Lianlian, Liu Tongxi">曹筱玲、刘赋、刘涟莲、刘桐汐</h4>
+                        <p class="text-sm text-mara-text/80 leading-relaxed i18n" data-zh="曹筱玲和刘赋在马赛马拉发起<b>非洲草原运动会</b>，刘涟莲和刘桐汐先后担任组织者，搭建了中非民间友谊的桥梁。" data-en="Initiated (Cao/Liu Fu) and organized (Liu Lianlian/Liu Tongxi) the <b>African Savanna Games</b>, building a bridge of Sino-African friendship.">曹筱玲和刘赋在马赛马拉发起<b>非洲草原运动会</b>，刘涟莲和刘桐汐先后担任组织者，搭建了中非民间友谊的桥梁。</p>
+                    </div>
+                </div>
+
+                <!-- 荣誉赞助人 -->
+                <div class="bg-gradient-to-r from-mara-sand/30 to-[#FDFBF7] p-6 rounded-xl border-l-8 border-mara-accent mb-8">
+                    <h4 class="font-serif font-bold text-xl text-mara-text mb-4 i18n" data-zh="🏛️ 马赛马拉自然保护中心（生命科学博物馆）荣誉赞助人" data-en="🏛️ Honorary Patrons of the Life Science Museum">🏛️ 马赛马拉自然保护中心（生命科学博物馆）荣誉赞助人</h4>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="刘勇" data-en="Liu Yong">刘勇</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="巫萍萍" data-en="Wu Pingping">巫萍萍</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="童奕霖" data-en="Tong Yilin">童奕霖</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="肯尼亚龙人旅行社" data-en="Longren Travel">肯尼亚龙人旅行社</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="刘韵" data-en="Liu Yun">刘韵</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="张博宁" data-en="Zhang Boning">张博宁</span>
+                        <span class="bg-[#4A3728] text-white px-4 py-2 rounded-lg font-bold shadow-sm i18n" data-zh="张晏宁" data-en="Zhang Yanning">张晏宁</span>
+                    </div>
+                </div>
+
+                <!-- 同心者名单 -->
+                <div class="pt-6 border-t border-mara-sand/40">
+                    <p class="text-sm text-mara-text/80 font-bold mb-4 i18n" data-zh="感谢所有同心同行的朋友们：" data-en="Thanks to all friends walking alongside us:">感谢所有同心同行的朋友们：</p>
+                    <div class="flex flex-wrap gap-2.5">
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">刘赋</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">曹筱玲</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">罗晓梅</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">曾理</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">温全华</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">柯绍烈</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">汪杰</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">高静华</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">钟云松</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">仇保顺</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">黄洲</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">李军 (Julia)</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">陈蓉</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">李卉</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">黄珂</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">蔡娟</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">黄静薇</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">阎家旭</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">张旭</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">谢光綦</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">程靓</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">孙海陆</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">梁耀生</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">刘常新</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">刘志南</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">蔡鸣</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">吴卫群</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">老雷</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">黄海俊</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">曾奇</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">谢先辉</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">张忠生</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">廖一百</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">汤鳞</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">袁林</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">刘毅</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">张戎</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">关伟凯</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">曹中华</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">李莉</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">陈晓燕</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">杨云</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">徐平</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">高飞</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">雷雨</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">解小法</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">庞杏丽</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">梁明玉</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">李白玲</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text text-sm">李俊霞</span>
+                        <span class="bg-mara-bg px-3 py-1 rounded-full border border-mara-sand/40 text-mara-text font-bold text-sm italic i18n" data-zh="... 以及所有默默支持野保的朋友们" data-en="... and all friends silently supporting conservation">... 以及所有默默支持野保的朋友们</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- ================= 星巴专属底部名片区 ================= -->
@@ -1086,8 +1410,7 @@
                         <div>
                             <p class="font-bold text-lg text-mara-sand i18n" data-zh="星巴 <span class='text-sm font-normal text-white/70 ml-1'>Simba Qiang Zhuo</span>" data-en="Simba Qiang Zhuo">星巴 <span class="text-sm font-normal text-white/70 ml-1">Simba Qiang Zhuo</span></p>
                             <p class="text-xs text-white/80 mt-2 mb-2 leading-relaxed bg-black/20 p-2 rounded border-l-2 border-mara-accent">
-                                <span class="i18n" data-zh="扎根肯尼亚的中国野保探险家。" data-en="Chinese wildlife conservation explorer based in Kenya.">扎根肯尼亚的中国野保探险家。</span><br>
-                                <span class="italic i18n" data-zh="“一顶 safari 牛仔帽，一身绿色户外服，披着红色马赛披风。”" data-en='"A safari cowboy hat, green outdoor gear, and a red Maasai blanket."'>“一顶 safari 牛仔帽，一身绿色户外服，披着红色马赛披风。”</span>
+                                <span class="i18n" data-zh="扎根肯尼亚的中国野保探险家。" data-en="Chinese wildlife conservation explorer based in Kenya.">扎根肯尼亚的中国野保探险家。</span>
                             </p>
                             <p class="text-sm text-white/90 leading-relaxed mt-2 i18n" data-zh="数十载与狮群为伴。致力于研究野生动物行为，化解人兽冲突，保护并恢复野生动物栖息地，推动中非野保合作。" data-en="Decades spent with lions. Dedicated to wildlife behavior research, human-wildlife conflict mitigation, habitat restoration, and promoting Sino-African conservation cooperation.">数十载与狮群为伴。致力于研究野生动物行为，化解人兽冲突，保护并恢复野生动物栖息地，推动中非野保合作。</p>
                         </div>
